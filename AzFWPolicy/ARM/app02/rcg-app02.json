@@ -1,7 +1,21 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "policyName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Firewall Policy"
+            }
+        },
+        "rcgName": {
+            "type": "string",
+            "defaultValue": "app02-rcg",
+            "metadata": {
+                "description": "Name of the Rule Collection Group"
+            }
+        }
+    },
     "variables": {
         "location": "[resourceGroup().location]"
     },
@@ -10,7 +24,7 @@
             "apiVersion": "2021-08-01",
             "dependsOn": [],
             "location": "[variables('location')]",
-            "name": "azfwpolicy/rcg-app02",
+            "name": "[concat(parameters('policyName'), '/', parameters('rcgName'))]",
             "properties": {
                 "priority": "12000",
                 "ruleCollections": [

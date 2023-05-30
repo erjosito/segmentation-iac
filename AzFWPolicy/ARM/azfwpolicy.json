@@ -1,12 +1,19 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "policyName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Firewall Policy"
+            }
+        }
+    },
     "resources": [
         {
             "apiVersion": "2021-08-01",
             "location": "[variables('location')]",
-            "name": "azfwpolicy",
+            "name": "[parameters('policyName')]",
             "properties": {
                 "dnsSettings": {
                     "enableProxy": "true"
