@@ -1,6 +1,8 @@
 on:
   push:
     branches: [master]
+    paths:
+      - '**.json'
 name: Azure ARM - Azure Firewall
 jobs:
   deploy-azfw-policy:
@@ -8,12 +10,27 @@ jobs:
     steps:
       # Checkout code
     - uses: actions/checkout@main
+      # Define path filters
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          azfw_any:
+            - 'AzFWPolicy/ARM/**.json'
+          azfw_global:
+            - 'AzFWPolicy/ARM/global/**.json'
+          azfw_app01:
+            - 'AzFWPolicy/ARM/app01/**.json'
+          azfw_app02:
+            - 'AzFWPolicy/ARM/app02/**.json'
       # Log into Azure
     - uses: azure/login@v1
+      if: steps.filter.outputs.azfw_any == 'true'
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
       # Deploy ARM template
     - name: Deploy ARM template for policy
+      if: steps.filter.outputs.azfw_global == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
