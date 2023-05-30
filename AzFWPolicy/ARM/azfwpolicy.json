@@ -9,6 +9,9 @@
             }
         }
     },
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
     "resources": [
         {
             "apiVersion": "2021-08-01",
