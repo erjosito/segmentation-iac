@@ -38,7 +38,7 @@
                         "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
                         "rules": [
                             {
-                                "name": "Windows activation",
+                                "name": "Windows-activation",
                                 "destinationAddresses": [
                                     "20.118.99.224", "40.83.235.53"
                                 ],
