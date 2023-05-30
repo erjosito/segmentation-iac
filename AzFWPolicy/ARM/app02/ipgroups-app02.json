@@ -12,8 +12,8 @@
             "location": "[variables('location')]",
             "properties": {
                 "ipAddresses": [
-                    "10.10.10.10",
-                    "10.10.10.11"
+                    "10.10.12.10",
+                    "10.10.12.11"
                 ]
             },
             "type": "Microsoft.Network/ipGroups"
@@ -24,8 +24,8 @@
             "location": "[variables('location')]",
             "properties": {
                 "ipAddresses": [
-                    "10.10.11.10",
-                    "10.10.12.11"
+                    "10.10.12.12",
+                    "10.10.12.13"
                 ]
             },
             "type": "Microsoft.Network/ipGroups"
