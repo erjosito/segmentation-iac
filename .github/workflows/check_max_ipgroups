@@ -1,6 +1,7 @@
 on:
   pull_request:
-    branches: [master]
+    branches:
+      - master
 name: Check correctness of ARM templates
 env:
   VALIDATE_JSON: true
