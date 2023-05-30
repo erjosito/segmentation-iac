@@ -1,13 +1,7 @@
----
-name: Check correctness of code
-env:
-  VALIDATE_JSON: true
 on:
-  # push:
-  #  branches-ignore: [main]
   pull_request:
-    branches: [main]
-
+    branches: [master]
+name: Check correctness of code
 jobs:
   check_code:
     steps:
