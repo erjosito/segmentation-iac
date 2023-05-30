@@ -19,6 +19,12 @@ jobs:
             - 'AzFWPolicy/ARM/**.json'
           azfw_global:
             - 'AzFWPolicy/ARM/global/**.json'
+          azfw_global_policy:
+            - 'AzFWPolicy/ARM/global/azfwpolicy.json'
+          azfw_global_rcg:
+            - 'AzFWPolicy/ARM/global/rcg-global.json'
+          azfw_global_ipgroups:
+            - 'AzFWPolicy/ARM/global/ipgroups-global.json'
           azfw_app01:
             - 'AzFWPolicy/ARM/app01/**.json'
           azfw_app02:
@@ -28,12 +34,28 @@ jobs:
       if: steps.filter.outputs.azfw_any == 'true'
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-      # Deploy ARM template
+      # Deploy ARM templates for global resources
     - name: Deploy ARM template for policy
-      if: steps.filter.outputs.azfw_global == 'true'
+      if: steps.filter.outputs.azfw_global_policy == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./AzFWPolicy/ARM/global/azfwpolicy.json
         parameters: policyName=TestPolicy
+    - name: Deploy ARM template for IP groups
+      if: steps.filter.outputs.azfw_global_ipgroups == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/global/ipgroups-global.json
+    - name: Deploy ARM template for RCG
+      if: steps.filter.outputs.azfw_global_rcg == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/global/rcg-global.json
+        parameters: policyName=TestPolicy rcgName=GlobalRCG
+  
