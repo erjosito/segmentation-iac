@@ -67,10 +67,9 @@
                             {
                                 "name": "Ubuntu repositories",
                                 "destinationAddresses": [],
-                                "destinationFqdns": [
+                                "targetFqdns": [
                                     "*.ubuntu.com"
                                 ],
-                                "destinationIpGroups": [],
                                 "protocols": [ 
                                     {
                                         "protocolType": "Https",
@@ -79,7 +78,10 @@
                                 ],
                                 "ruleType": "ApplicationRule",
                                 "sourceAddresses": [ "*" ],
-                                "sourceIpGroups": []
+                                "sourceIpGroups": [],
+                                "fqdnTags": [],
+                                "targetUrls": [],
+                                "webCategories": []
                             }
                         ]
                     }
