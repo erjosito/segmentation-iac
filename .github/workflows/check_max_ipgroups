@@ -1,7 +1,9 @@
 on:
   pull_request:
     branches: [master]
-name: Check correctness of code
+name: Check correctness of ARM templates
+env:
+  VALIDATE_JSON: true
 jobs:
   lint:
     name: Check code syntax
@@ -9,6 +11,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Lint Code Base for JSON correctness
+        uses: github/super-linter/slim@v4
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check ipgroups_max
         uses: ./.github/actions/ipgroups_max
         with:
