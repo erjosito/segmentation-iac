@@ -4,6 +4,7 @@
     "parameters": {
         "policyName": {
             "type": "string",
+            "defaultValue": "myazurepolicy",
             "metadata": {
                 "description": "Name of the Azure Firewall Policy"
             }
