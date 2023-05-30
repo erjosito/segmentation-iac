@@ -1,0 +1,20 @@
+on: [push]
+  name: Azure ARM - Azure Firewall
+  jobs:
+    build-and-deploy:
+      runs-on: ubuntu-latest
+      steps:
+        # Checkout code
+      - uses: actions/checkout@main
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        # Deploy ARM template
+      - name: Deploy ARM template for policy
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./AzFWPolicy/azfwpolicy.json
+          parameters: policyName=TestPolicy
