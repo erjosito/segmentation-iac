@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2021-08-01",
+            "dependsOn": [],
+            "location": "[variables('location')]",
+            "name": "azfwpolicy/rcg-global",
+            "properties": {
+                "priority": "10000",
+                "ruleCollections": [
+                    {
+                        "action": {
+                            "type": "allow"
+                        },
+                        "name": "Global network rules",
+                        "priority": "10100",
+                        "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+                        "rules": [
+                            {
+                                "name": "Windows activation",
+                                "destinationAddresses": [
+                                    "20.118.99.224", "40.83.235.53"
+                                ],
+                                "destinationFqdns": [],
+                                "destinationIpGroups": [],
+                                "destinationPorts": [
+                                    "1688"
+                                ],
+                                "ipProtocols": [
+                                    "TCP"
+                                ],
+                                "ruleType": "NetworkRule",
+                                "sourceAddresses": [ "*" ],
+                                "sourceIpGroups": []
+                            }
+                        ]
+                    },
+                    {
+                        "action": {
+                            "type": "allow"
+                        },
+                        "name": "Global application rules",
+                        "priority": "10200",
+                        "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+                        "rules": [
+                            {
+                                "name": "Ubuntu repositories",
+                                "destinationAddresses": [],
+                                "destinationFqdns": [
+                                    "*.ubuntu.com"
+                                ],
+                                "destinationIpGroups": [],
+                                "protocols": [ 
+                                    {
+                                        "protocolType": "Https",
+                                        "port": "443"
+                                    }
+                                ],
+                                "ruleType": "ApplicationRule",
+                                "sourceAddresses": [ "*" ],
+                                "sourceIpGroups": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups"
+        }
+    ]
+}

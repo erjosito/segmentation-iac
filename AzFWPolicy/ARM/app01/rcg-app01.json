@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2021-08-01",
+            "dependsOn": [],
+            "location": "[variables('location')]",
+            "name": "azfwpolicy/rcg-app01",
+            "properties": {
+                "priority": "11000",
+                "ruleCollections": [
+                    {
+                        "action": {
+                            "type": "allow"
+                        },
+                        "name": "app01-network",
+                        "priority": "11100",
+                        "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+                        "rules": [
+                            {
+                                "name": "app01-web_to_sql",
+                                "destinationAddresses": [],
+                                "destinationFqdns": [],
+                                "destinationIpGroups": [
+                                    "[resourceId('Microsoft.Network/ipGroups', 'app01-sqlservers')]"
+                                ],
+                                "destinationPorts": [
+                                    "1433"
+                                ],
+                                "ipProtocols": [
+                                    "TCP"
+                                ],
+                                "ruleType": "NetworkRule",
+                                "sourceAddresses": [],
+                                "sourceIpGroups": [
+                                    "[resourceId('Microsoft.Network/ipGroups', 'app01-appservers')]"
+                                ]
+                            },
+                            {
+                                "name": "app01-mgmt",
+                                "destinationAddresses": [],
+                                "destinationFqdns": [],
+                                "destinationIpGroups": [
+                                    "[resourceId('Microsoft.Network/ipGroups', 'app01-appservers')]",
+                                    "[resourceId('Microsoft.Network/ipGroups', 'app01-sqlservers')]"
+                                ],
+                                "destinationPorts": [
+                                    "22",
+                                    "161-162"
+                                ],
+                                "ipProtocols": [
+                                    "UDP",
+                                    "TCP"
+                                ],
+                                "ruleType": "NetworkRule",
+                                "sourceAddresses": [ "172.16.100.0/24" ],
+                                "sourceIpGroups": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups"
+        }
+    ]
+}

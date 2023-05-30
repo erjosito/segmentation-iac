@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2021-08-01",
+            "name": "app01-sqlservers",
+            "location": "[variables('location')]",
+            "properties": {
+                "ipAddresses": [
+                    "10.10.10.10",
+                    "10.10.10.11"
+                ]
+            },
+            "type": "Microsoft.Network/ipGroups"
+        },
+        {
+            "apiVersion": "2021-08-01",
+            "name": "app01-appservers",
+            "location": "[variables('location')]",
+            "properties": {
+                "ipAddresses": [
+                    "10.10.11.10",
+                    "10.10.12.11"
+                ]
+            },
+            "type": "Microsoft.Network/ipGroups"
+        }
+    ]
+}
