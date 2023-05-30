@@ -31,7 +31,6 @@ jobs:
             - 'AzFWPolicy/ARM/app02/**.json'
       # Log into Azure
     - uses: azure/login@v1
-      if: steps.filter.outputs.azfw_any == 'true'
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
       # Deploy ARM templates for global resources
