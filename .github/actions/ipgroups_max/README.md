@@ -1,33 +1,27 @@
-# Azure review checklist linter
+# Maximum number of IP Groups check
 
-This action verifies the correctness of an Azure review checklist (stored in [this repo](https://github.com/Azure/review-checklists) and forks).
+This action verifies that the templates in the repo do not contain too many IP groups.
 
 ## Inputs
 
+## `file_prefix`
+
+**Optional** File prefix for the ARM templates to be analyzed. Default `"ipgroups"`.
+
 ## `file_extension`
 
-**Optional** File extension for the lists to be linted. Default `"en.json"`.
+**Optional** File extension for the ARM templates to be analyzed. Default `"json"`.
 
-## `key_name`
+## `max_ipgroups`
 
-**Optional** Key name in the JSON files to look for the unique values. Default `"guid"`.
-
-## `criteria_key`
-
-**Optional** JSON key to use so that only specific checklists are linted. Default `""`. It requires `criteria_value`.
-
-## `criteria_value`
-
-**Optional** JSON value to use so that only specific checklists are linted. Default `""`. It requires `criteria_key`.
-
-## Outputs
-
-## `number_of_checklists`
-
-Number of checklists that have been linted
+**Optional** Maximum number of IP groups allowed. Default `"80"`.
 
 ## Example usage
 
-uses: erjosito/review-checklists-lint@v1
+```
+uses: ./.github/actions/ipgroups_max
 with:
-  language: 'en'
+  file_prefix: 'ipgroups'
+  file_extension: 'json'
+  max_ip_groups: '80'
+```

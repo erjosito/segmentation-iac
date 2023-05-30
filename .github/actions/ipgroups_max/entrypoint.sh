@@ -19,6 +19,9 @@ for file in $file_list; do
     ipgroup_no=$((ipgroup_no + this_ipgroup_no))
 done
 
+# Output
+echo "number_of_ipgroups=$ipgroup_no" >> $GITHUB_OUTPUT
+
 # Finish
 if [ "$ipgroup_no" -gt "$max_ipgroup_no" ]; then
     echo "ERROR: Found $ipgroup_no IP groups, which is more than the maximum of $max_ipgroup_no."

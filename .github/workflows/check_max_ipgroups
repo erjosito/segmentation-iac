@@ -3,9 +3,15 @@ on:
     branches: [master]
 name: Check correctness of code
 jobs:
-  check_code:
+  lint:
+    name: Check code syntax
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Check ipgroups_max
         uses: ./.github/actions/ipgroups_max
+        with:
+          file_prefix: 'ipgroups'
+          file_extension: 'json'
+          max_ip_groups: '80'
