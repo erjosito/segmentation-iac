@@ -1,0 +1,17 @@
+---
+name: Check correctness of code
+env:
+  VALIDATE_JSON: true
+on:
+  # push:
+  #  branches-ignore: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check_code:
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Check ipgroups_max
+        uses: ./.github/actions/ipgroups_max

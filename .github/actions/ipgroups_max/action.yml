@@ -10,6 +10,10 @@ inputs:
     description: 'Extension of files to check'
     required: false
     default: 'json'
+  max_ip_groups:  # Maximum number of IP groups allowed
+    description: 'Maximum number of IP groups allowed'
+    required: false
+    default: '80'
 outputs:
   number_of_ipgroups: # number of IP groups
     description: 'The total number of IP groups existing in files processed'
@@ -19,3 +23,4 @@ runs:
   args:
     - ${{ inputs.file_prefix }}
     - ${{ inputs.file_extension }}
+    - ${{ inputs.max_ip_groups }}
