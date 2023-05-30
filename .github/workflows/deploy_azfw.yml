@@ -1,4 +1,6 @@
-on: [push]
+on:
+  push:
+    branches: [main]
 name: Azure ARM - Azure Firewall
 jobs:
   deploy-azfw-policy:
