@@ -25,7 +25,7 @@
             "properties": {
                 "ipAddresses": [
                     "10.10.12.12",
-                    "10.10.12.13"
+                    "10.10.12.14"
                 ]
             },
             "type": "Microsoft.Network/ipGroups"
