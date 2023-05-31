@@ -18,7 +18,7 @@ try:
     min_cidr_length = int(sys.argv[3])
 except:
     min_cidr_length = 24
-print("DEBUG: Running with file_prefixes='{0}', file_extensions='{1}', min_cidr_length={2}".format(file_prefixes, file_extensions, min_cidr_length))
+print("DEBUG: Running with file_prefixes='{0}', file_extension='{1}', min_cidr_length={2}".format(file_prefixes, file_extension, min_cidr_length))
 
 # Read files
 file_prefix_list=file_prefixes.split(' ')
