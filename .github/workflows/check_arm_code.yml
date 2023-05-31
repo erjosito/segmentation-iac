@@ -29,3 +29,10 @@ jobs:
           file_prefix: 'ipgroups'
           file_extension: 'json'
           max_ip_groups: '80'
+
+      - name: Check CIDR prefix length
+        uses: ./.github/actions/cidr_prefix_length
+        with:
+          file_prefixes: 'ipgroups rcg'
+          file_extension: 'json'
+          min_cidr_length: '24'

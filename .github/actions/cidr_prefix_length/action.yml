@@ -1,0 +1,23 @@
+# action.yml
+name: 'Validate IP prefix lengths'
+description: 'Validate that IP groups are lower than the limit'
+inputs:
+  file_prefix:  # prefix of files to check
+    description: 'Prefix of files to check'
+    required: false
+    default: 'ipgroups rcg'
+  file_extension:  # extension of files to check
+    description: 'Extension of files to check'
+    required: false
+    default: 'json'
+  min_cidr_length:  # Minimum CIDR prefix length allowed
+    description: 'Minimum CIDR prefix length allowed'
+    required: false
+    default: '24'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.file_prefix }}
+    - ${{ inputs.file_extension }}
+    - ${{ inputs.min_cidr_length }}
