@@ -2,7 +2,7 @@
     "action": {
         "type": "allow"
     },
-    "name": "app03-network-01-qa",
+    "name": "app03-network-02-qa",
     "priority": "13102",
     "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
     "rules": [

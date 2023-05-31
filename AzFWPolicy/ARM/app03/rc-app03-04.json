@@ -18,7 +18,7 @@
                 "TCP"
             ],
             "ruleType": "NetworkRule",
-            "sourceAddresses": [ "10.10.14.192/26" ],
+            "sourceAddresses": [ "10.10.13.192/26" ],
             "sourceIpGroups": []
         }
     ]
