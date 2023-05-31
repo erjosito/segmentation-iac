@@ -37,12 +37,12 @@ jobs:
             - 'AzFWPolicy/ARM/app02/rcg-app02.json'
           azfw_app02_ipgroups:
             - 'AzFWPolicy/ARM/app02/ipgroups-app02.json'
-        # Log into Azure
+    # Log into Azure
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-      # Deploy ARM templates for global resources
-    - name: Deploy ARM template for policy
+    # Deploy ARM templates for global resources
+    - name: Deploy ARM template for global policy
       if: steps.filter.outputs.azfw_global_policy == 'true'
       uses: azure/arm-deploy@v1
       with:
@@ -50,14 +50,14 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./AzFWPolicy/ARM/global/azfwpolicy.json
         parameters: policyName=TestPolicy
-    - name: Deploy ARM template for IP groups
+    - name: Deploy ARM template for global IP groups
       if: steps.filter.outputs.azfw_global_ipgroups == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./AzFWPolicy/ARM/global/ipgroups-global.json
-    - name: Deploy ARM template for RCG
+    - name: Deploy ARM template for global RCG
       if: steps.filter.outputs.azfw_global_rcg == 'true'
       uses: azure/arm-deploy@v1
       with:
@@ -65,4 +65,35 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./AzFWPolicy/ARM/global/rcg-global.json
         parameters: policyName=TestPolicy rcgName=GlobalRCG
-  
+      # Deploy ARM templates for app01
+    - name: Deploy ARM template for app01 IP groups
+      if: steps.filter.outputs.azfw_app01_ipgroups == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/app01/ipgroups-app01.json
+    - name: Deploy ARM template for app01 RCG
+      if: steps.filter.outputs.azfw_app01_rcg == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/app01/rcg-app01.json
+        parameters: policyName=TestPolicy rcgName=app01-RCG
+    # Deploy ARM templates for app02
+    - name: Deploy ARM template for app02 IP groups
+      if: steps.filter.outputs.azfw_app02_ipgroups == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/app02/ipgroups-app02.json
+    - name: Deploy ARM template for app02 RCG
+      if: steps.filter.outputs.azfw_app02_rcg == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/app01/rcg-app02.json
+        parameters: policyName=TestPolicy rcgName=app02-RCG
