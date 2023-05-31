@@ -37,7 +37,9 @@ jobs:
             - 'AzFWPolicy/ARM/app02/rcg-app02.json'
           azfw_app02_ipgroups:
             - 'AzFWPolicy/ARM/app02/ipgroups-app02.json'
-    # Log into Azure
+          azfw_app03:
+            - 'AzFWPolicy/ARM/app03/**.json'
+        # Log into Azure
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -97,3 +99,17 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./AzFWPolicy/ARM/app01/rcg-app02.json
         parameters: policyName=TestPolicy rcgName=app02-RCG
+    # Deploy ARM templates for app03 (aggregate files)
+    - name: Deploy ARM template for app03 rule collections (aggregate files)
+      if: steps.filter.outputs.azfw_app03 == 'true'
+      run: |
+        python3 ./scripts/merge_rcg.py --directory ./AzFWPolicy/ARM/app03 --output-file ./AzFWPolicy/ARM/app03/rcg-merged.json --verbose
+    - name: Deploy ARM template for merged app03 RCG
+      if: steps.filter.outputs.azfw_app03 == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/ARM/app03/rcg-merged.json
+        parameters: policyName=TestPolicy rcgName=app03-RCG
+  
