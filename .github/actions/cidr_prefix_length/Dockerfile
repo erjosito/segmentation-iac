@@ -3,4 +3,4 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 COPY entrypoint.py entrypoint.py
 RUN pip3 install -r requirements.txt
-ENTRYPOINT ["python3", "entrypoint.py"]
+ENTRYPOINT ["python3", "/app/entrypoint.py"]

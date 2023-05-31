@@ -26,10 +26,18 @@ jobs:
           azfw_global_ipgroups:
             - 'AzFWPolicy/ARM/global/ipgroups-global.json'
           azfw_app01:
-            - 'AzFWPolicy/ARM/app01/**.json'
+          - 'AzFWPolicy/ARM/app01/**.json'
+          azfw_app01_rcg:
+            - 'AzFWPolicy/ARM/app01/rcg-app01.json'
+          azfw_app01_ipgroups:
+            - 'AzFWPolicy/ARM/app01/ipgroups-app01.json'
           azfw_app02:
             - 'AzFWPolicy/ARM/app02/**.json'
-      # Log into Azure
+          azfw_app02_rcg:
+            - 'AzFWPolicy/ARM/app02/rcg-app02.json'
+          azfw_app02_ipgroups:
+            - 'AzFWPolicy/ARM/app02/ipgroups-app02.json'
+        # Log into Azure
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
