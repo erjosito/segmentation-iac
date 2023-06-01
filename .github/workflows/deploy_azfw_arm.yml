@@ -16,7 +16,7 @@ jobs:
       with:
         filters: |
           azfw_any:
-            - 'AzFWPolicy/ARM/**.json'
+            - 'AzFWPolicy/ARM/**'
           azfw_global:
             - 'AzFWPolicy/ARM/global/**.json'
           azfw_global_policy:
