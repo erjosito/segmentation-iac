@@ -2,7 +2,7 @@
 name: 'Validate IP prefix lengths'
 description: 'Validate that IP groups are lower than the limit'
 inputs:
-  file_prefix:  # prefix of files to check
+  file_prefixes:  # prefix of files to check
     description: 'Prefix of files to check'
     required: false
     default: 'ipgroups rcg'
@@ -18,6 +18,6 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.file_prefix }}
+    - ${{ inputs.file_prefixes }}
     - ${{ inputs.file_extension }}
     - ${{ inputs.min_cidr_length }}

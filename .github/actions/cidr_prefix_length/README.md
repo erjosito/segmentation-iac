@@ -4,7 +4,7 @@ This action verifies that the templates in the repo do not contain too many IP g
 
 ## Inputs
 
-## `file_prefix`
+## `file_prefixes`
 
 **Optional** File prefixes (space-separated) for the ARM templates to be analyzed. Default `"ipgroups rcg"`.
 
@@ -21,7 +21,7 @@ This action verifies that the templates in the repo do not contain too many IP g
 ```
 uses: ./.github/actions/cidr_prefix_length
 with:
-  file_prefix: 'ipgroups rcg'
+  file_prefixes: 'ipgroups rcg'
   file_extension: 'json'
   min_cidr_length: '24'
 ```

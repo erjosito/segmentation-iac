@@ -4,7 +4,7 @@ This action verifies that the templates in the repo do not contain too many IP g
 
 ## Inputs
 
-## `file_prefix`
+## `file_prefixes`
 
 **Optional** File prefixes (space-separated) for the ARM templates to be analyzed. Default `"ipgroups rcg"`.
 
