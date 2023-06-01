@@ -1,0 +1,24 @@
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '**.bicep'
+name: Check correctness of bicep templates
+jobs:
+  lint:
+    name: Check code syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Check CIDR prefix length
+        uses: ./.github/actions/cidr_prefix_length_bicep
+        with:
+          file_prefixes: 'ipgroups rcg'
+          file_extension: 'bicep'
+          min_cidr_length: '24'

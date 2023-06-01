@@ -2,6 +2,8 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - '**.json'
 name: Check correctness of ARM templates
 env:
   VALIDATE_JSON: true
