@@ -16,7 +16,7 @@ jobs:
       with:
         filters: |
           azfw_any:
-            - 'AzFWPolicy/bicep/**.bicep'
+            - 'AzFWPolicy/bicep/**'
         # Log into Azure
     - uses: azure/login@v1
       with:
