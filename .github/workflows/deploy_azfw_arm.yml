@@ -6,6 +6,8 @@ on:
 name: Azure ARM - Azure Firewall
 jobs:
   deploy-azfw-policy:
+    concurrency:
+      group: deploy_azfw
     runs-on: ubuntu-latest
     steps:
       # Checkout code
