@@ -18,7 +18,7 @@ resource app02_appservers 'Microsoft.Network/ipGroups@2021-08-01' = {
   properties: {
     ipAddresses: [
       '10.10.12.13'
-      '10.10.12.14'
+      '10.10.12.15'
     ]
   }
 }
