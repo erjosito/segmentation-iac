@@ -1,0 +1,25 @@
+{
+    "action": {
+        "type": "allow"
+    },
+    "name": "app03-network-04-prod",
+    "priority": "13104",
+    "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+    "rules": [
+        {
+            "name": "app03-web_to_sql",
+            "destinationAddresses": [ "10.10.13.192/26" ],
+            "destinationFqdns": [],
+            "destinationIpGroups": [],
+            "destinationPorts": [
+                "1433"
+            ],
+            "ipProtocols": [
+                "TCP"
+            ],
+            "ruleType": "NetworkRule",
+            "sourceAddresses": [ "10.10.13.192/26" ],
+            "sourceIpGroups": []
+        }
+    ]
+}
