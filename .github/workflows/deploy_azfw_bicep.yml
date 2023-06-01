@@ -1,0 +1,32 @@
+on:
+  push:
+    branches: [master]
+    paths:
+      - '**.bicep'
+name: Azure ARM - Azure Firewall
+jobs:
+  deploy-azfw-policy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+    - uses: actions/checkout@main
+      # Define path filters
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          azfw_any:
+            - 'AzFWPolicy/bicep/**.bicep'
+        # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # Deploy bicep template
+    - name: Deploy ARM template for global policy
+      if: steps.filter.outputs.azfw_any == 'true'
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./AzFWPolicy/bicep/azfwpolicy.bicep
+        parameters: policyName=TestPolicyBicep
