@@ -22,3 +22,4 @@ jobs:
           file_prefixes: 'ipgroups rcg'
           file_extension: 'bicep'
           min_cidr_length: '24'
+          base_dir: './AzFWPolicy/bicep'

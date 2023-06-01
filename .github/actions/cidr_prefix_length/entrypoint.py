@@ -3,7 +3,6 @@ import glob
 import json
 
 # Global variables
-base_dir = "./AzFWPolicy/ARM"
 lowest_cidr_found = 32
 
 # Read parameters
@@ -19,7 +18,11 @@ try:
     min_cidr_length = int(sys.argv[3])
 except:
     min_cidr_length = 24
-print("DEBUG: Running with file_prefixes='{0}', file_extension='{1}', min_cidr_length={2}".format(file_prefixes, file_extension, min_cidr_length))
+try:
+    base_dir = int(sys.argv[4])
+except:
+    base_dir = "./AzFWPolicy/bicep"
+print("DEBUG: Running with file_prefixes='{0}', file_extension='{1}', min_cidr_length={2}, base_dir='{3}'".format(file_prefixes, file_extension, min_cidr_length, base_dir))
 
 # Process list of CIDRs
 def process_cidr_list(cidr_list):

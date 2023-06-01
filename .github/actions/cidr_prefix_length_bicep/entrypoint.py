@@ -5,7 +5,6 @@ from pathlib import Path
 from pycep import BicepParser
 
 # Global variables
-base_dir = "./AzFWPolicy/ARM"
 lowest_cidr_found = 32
 
 # Read parameters
@@ -21,7 +20,12 @@ try:
     min_cidr_length = int(sys.argv[3])
 except:
     min_cidr_length = 24
-print("DEBUG: Running with file_prefixes='{0}', file_extension='{1}', min_cidr_length={2}".format(file_prefixes, file_extension, min_cidr_length))
+try:
+    base_dir = int(sys.argv[4])
+except:
+    base_dir = "./AzFWPolicy/bicep"
+
+print("DEBUG: Running with file_prefixes='{0}', file_extension='{1}', min_cidr_length={2}, base_dir='{3}'".format(file_prefixes, file_extension, min_cidr_length, base_dir))
 
 # Process list of CIDRs
 def process_cidr_list(cidr_list):
@@ -52,18 +56,22 @@ for file_prefix in file_prefix_list:
                         process_cidr_list(resource['config']['properties']['ipAddresses'])
                     elif resource['type'].lower() == 'Microsoft.Network/firewallPolicies/ruleCollectionGroups'.lower():
                         rcs = resource['config']['properties']['ruleCollections']
+                        print ("DEBUG: Found {0} rule collections in file '{1}'".format(len(rcs), file))
                         for rc in rcs:
-                            print("DEBUG: Found rule collection '{0}' in file '{1}'".format(rc['name'], file))
-                            if 'rules' in rc:
-                                for rule in rc['rules']:
-                                    if 'destinationAddresses' in rule:
-                                        process_cidr_list(rule['destinationAddresses'])
-                                    if 'sourceAddresses' in rule:
-                                        process_cidr_list(rule['sourceAddresses'])
+                            if 'name' in rc:
+                                print("DEBUG: Found rule collection '{0}' in file '{1}'".format(rc['name'], file))
+                                if 'rules' in rc:
+                                    for rule in rc['rules']:
+                                        if 'destinationAddresses' in rule:
+                                            process_cidr_list(rule['destinationAddresses'])
+                                        if 'sourceAddresses' in rule:
+                                            process_cidr_list(rule['sourceAddresses'])
+                                else:
+                                    print("WARNING: No rules found in rule collection '{0}' in file '{1}'".format(rc['name'], file))
                             else:
-                                print("WARNING: No rules found in rule collection '{0}' in file '{1}'".format(rc['name'], file))
+                                print("WARNING: No name found in rule collection '{1}' in file '{0}'".format(file, str(rc)))
         except Exception as e:
-            print("ERROR: Unable to parse JSON file '{0}': {1}".format(file, str(e)))
+            print("ERROR: Unable to parse bicep file '{0}': {1}".format(file, str(e)))
             continue
 
 # Exit

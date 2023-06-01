@@ -16,6 +16,10 @@ This action verifies that the templates in the repo do not contain too many IP g
 
 **Optional** Minimum CIDR prefix length allowed. Default `"24"`.
 
+## `base_dir`
+
+**Optional** Directory where to look for files. Default `"./AzFWPolicy/bicep"`.
+
 ## Example usage
 
 ```
@@ -24,4 +28,5 @@ with:
   file_prefix: 'ipgroups rcg'
   file_extension: 'json'
   min_cidr_length: '24'
+  base_dir: './AzFWPolicy/ARM'
 ```

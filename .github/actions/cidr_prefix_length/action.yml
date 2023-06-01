@@ -14,6 +14,10 @@ inputs:
     description: 'Minimum CIDR prefix length allowed'
     required: false
     default: '24'
+  base_dir:  # Directory where to look for files
+    description: 'Source files directory'
+    required: false
+    default: './AzFWPolicy/ARM'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -21,3 +25,4 @@ runs:
     - ${{ inputs.file_prefixes }}
     - ${{ inputs.file_extension }}
     - ${{ inputs.min_cidr_length }}
+    - ${{ inputs.base_dir }}
