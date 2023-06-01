@@ -2,8 +2,8 @@ on:
   push:
     branches: [master]
     paths:
-      - '**.bicep'
-name: Azure ARM - Azure Firewall
+      - 'AzFWPolicy/bicep/**'
+name: Azure bicep - Azure Firewall
 jobs:
   deploy-azfw-policy:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     # Deploy bicep template
-    - name: Deploy ARM template for global policy
+    - name: Deploy bicep template for global policy
       if: steps.filter.outputs.azfw_any == 'true'
       uses: azure/arm-deploy@v1
       with:

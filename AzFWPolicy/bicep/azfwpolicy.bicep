@@ -50,7 +50,6 @@ module app03 './app03/app03.bicep' = {
   params: {
     policyName: policy.name
     prefix: 'app03b'
-    location: location
   }
   // RCGs should be deployed sequentially
   dependsOn: [app02]
