@@ -16,7 +16,16 @@ Separate files for each administrative domain in your organization (like applica
 
 Ideally you can separate files at resource boundaries. For example, you can have different files per Rule Collection Group (as in `app01` and `app02` in the example in this repo), and giving access to each Rule Collection Group file to a different application team.
 
-You might need to be more specific. For example, if with the previous scheme you ended up with more than 60 rule collection groups, that wouldn't be supported by Azure Firewall today (check [Azure Limits](https://aka.ms/azurelimit)). You could partition a single Azure resource (the rule collection group in this example) in multiple files, for example using the Azure bicep functions [loadJsonContent](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-files#loadjsoncontent) and [loadYamlContent](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-files#loadyamlcontent). You can see an example of this setup in this repo, in the [app03 folder](./bicep/app03/rcg-app03.bicep).
+You might need to be more specific. For example, if with the previous scheme you ended up with more than 60 rule collection groups, that wouldn't be supported by Azure Firewall today (check [Azure Limits](https://aka.ms/azurelimit)). You could partition a single Azure resource (the rule collection group in this example) in multiple files, for example using the Azure bicep functions [loadJsonContent](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-files#loadjsoncontent) and [loadYamlContent](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-files#loadyamlcontent). You can see an example of this setup in this repo, in the [app03 folder](./bicep/app03/rcg-app03.bicep)
+
+An alternative approach can be seen in the [ARM directory](./ARM/app03/), where the script [merge_rcg.py](../scripts/merge_rcg.py) consolidates the different files into a single one.
+
+## Single vs multiple templates
+
+Two different approaches are presented in this repo:
+
+1. Option 1 (recommended): **single template**. This the approach followed in the [bicep directory](./bicep/). Whenever anything changes in any of the files, the whole lot is deployed again. Since the templates are idempotent, applying everything shouldn't trigger any change on resources that do not have changes. One benefit of this approach is that the dependencies are taken care of inside of the template, for example making sure that IP groups are created before the rule collection groups, so the [workflow](../.github/workflows/check_bicep_code.yml) is kept relatively simple.
+1. Option 2: **multiple templates**. This is the approach followed in the [ARM directory](./ARM/). While this approach gives a more granular control on the templates that are deployed, it moves the logic from inside the template to the [Github workflow](../.github/workflows/deploy_azfw_arm.yml). ARM doesn't have such an advanced file management mechanism like bicep or Terraform, so if you are going with ARM this might be they only possible approach that allows to keep files separated.
 
 ## Use Github actions to validate code
 
