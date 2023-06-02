@@ -1,7 +1,8 @@
 on:
   schedule:
     - cron: '0 0 * * *'
-name: Azure bicep - Azure Firewall
+  workflow_dispatch:
+name: Azure bicep - Azure Firewall - Manual
 jobs:
   deploy-azfw-policy:
     concurrency:

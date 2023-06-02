@@ -3,7 +3,7 @@ on:
     branches: [master]
     paths:
       - '**.json'
-name: Azure ARM - Azure Firewall
+name: Azure ARM - Azure Firewall - On Push
 jobs:
   deploy-azfw-policy:
     concurrency:

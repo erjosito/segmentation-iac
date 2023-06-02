@@ -3,7 +3,7 @@ on:
     branches: [master]
     paths:
       - '**/bicep/*.*'
-name: Azure bicep - Azure Firewall
+name: Azure bicep - Azure Firewall - On Push
 jobs:
   deploy-azfw-policy:
     concurrency:
