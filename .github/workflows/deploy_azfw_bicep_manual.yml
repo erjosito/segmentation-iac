@@ -1,8 +1,6 @@
 on:
-  push:
-    branches: [master]
-    paths:
-      - '**/bicep/*.*'
+  schedule:
+    - cron: '0 0 * * *'
 name: Azure bicep - Azure Firewall
 jobs:
   deploy-azfw-policy:
