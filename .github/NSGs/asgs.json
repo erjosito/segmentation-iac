@@ -1,0 +1,10 @@
+{
+    "assignments": [
+        {
+            "field": "osType",
+            "operator": "equals",
+            "value": "Windows",
+            "asg": ""
+        }
+    ]
+}
