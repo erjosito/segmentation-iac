@@ -11,7 +11,7 @@ resource explicitAllowLBInbound 'Microsoft.Network/networkSecurityGroups/securit
     destinationAddressPrefix: 'VirtualNetwork'
     destinationPortRange: '*'
     direction: dir
-    priority: 64100
+    priority: 4094
     protocol: 'Icmp'
     sourceAddressPrefix: '168.63.129.16'
     sourcePortRange: '*'
@@ -26,7 +26,7 @@ resource explicitDenyInbound 'Microsoft.Network/networkSecurityGroups/securityRu
     destinationAddressPrefix: '*'
     destinationPortRange: '*'
     direction: dir
-    priority: 64110
+    priority: 4095
     protocol: '*'
     sourceAddressPrefix: '*'
     sourcePortRange: '*'
