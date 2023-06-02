@@ -17,8 +17,6 @@ jobs:
       id: filter
       with:
         filters: |
-          azfw_any:
-            - 'AzFWPolicy/ARM/**'
           azfw_shared:
             - 'shared/ARM/**.json'
           azfw_shared_policy:

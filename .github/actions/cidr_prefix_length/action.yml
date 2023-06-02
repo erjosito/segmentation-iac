@@ -17,7 +17,7 @@ inputs:
   base_dir:  # Directory where to look for files
     description: 'Source files directory'
     required: false
-    default: './AzFWPolicy/ARM'
+    default: './ARM'
 runs:
   using: 'docker'
   image: 'Dockerfile'

@@ -21,7 +21,7 @@ except:
 try:
     base_dir = int(sys.argv[4])
 except:
-    base_dir = "./AzFWPolicy/bicep"
+    base_dir = "./"
 print("DEBUG: Running with file_prefixes='{0}', file_extension='{1}', min_cidr_length={2}, base_dir='{3}'".format(file_prefixes, file_extension, min_cidr_length, base_dir))
 
 # Process list of CIDRs
