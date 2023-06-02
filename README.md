@@ -11,6 +11,8 @@ This repo contains examples of different IaC approaches for network segmentation
 
 # Azure Firewall
 
+We will start the discussion with examples to deploy Azure Firewall, a resource that is centralized in a shared subscription.
+
 Azure Firewall has a 3-level hierarchy, with some rules and limits (see [Azure Firewall Limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-firewall-limits))that will determine the grouping:
 
 1. Rules: can be application- or network-based
@@ -24,6 +26,8 @@ For larger deployments, a rule collection group would represent a group of appli
 ## Use protected branches
 
 You should [protect](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) the main/master branch, so that users always need to go through the Pull Request process, and not push straight into the branches. Different tests and checks will be performed in the PR, and a manual approval should be required before merging the PR.
+
+![branch protection](./images/branch_protection.png)
 
 ## Use separate files
 
@@ -106,3 +110,12 @@ The [bicep template](./shared/bicep/azfwpolicy.bicep) is configured to look for 
 
 # Network Security Groups
 
+Network Security Groups (NSGs) are an interesting exercise, since opposite to Azure Firewall policies, they are completely distributed. Looking at our application `app04` with a separate repository ([segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04)), this application will be deployed in a different subscription, with a different Virtual Network, and of course different NSGs.
+
+The Azure credentials, including the subscription ID and resource group for `app04` are stored in the secrets of that repo. NSGs should be deployed in the same subscription as the VNet, and hence it is only logical that the deployment workflow runs in the `app04`'s repo (the repo with the shared resources shouldn't need the credentials to the workload's subscription). And yet, the shared repo might contain some required information.
+
+In this example, the shared repo contains some [common NSG rules](./shared/bicep/nsg-shared-inbound-rules.bicep) that are to be inserted in every NSG for all workloads. Consequently, the [workflow in segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04/blob/master/.github/workflows/deploy_prod_nsg_bicep.yml) checks out the shared repo as well, and the [NSG bicep template](https://github.com/erjosito/segmentation-iac-app04/blob/master/app04/prod/nsg-app04-prod.bicep) contains a module to be found in the folder where the shared repo is cloned.
+
+After running the template, you can see that the NSG is created with the rules contained in the local repo, and the shared rules from the shared one:
+
+![app04 NSG](./images/app04_nsg.png)
