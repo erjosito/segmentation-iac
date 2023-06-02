@@ -54,3 +54,13 @@ module app03 '../../app03/bicep/app03.bicep' = {
   // RCGs should be deployed sequentially
   dependsOn: [app02]
 }
+
+module app04 '../../app04/app04/azfw-app04.bicep' = {
+  name: 'app04'
+  params: {
+    policyName: policy.name
+    prefix: 'app04b'
+  }
+  // RCGs should be deployed sequentially
+  dependsOn: [app03]
+}

@@ -11,6 +11,12 @@ jobs:
     steps:
     # Checkout code
     - uses: actions/checkout@main
+    # Checkout remote repo for app04 (the path is important, the bicep template expects to find it there)
+    - name: Checkout shared repo
+      uses: actions/checkout@v2
+      with:
+        repository: erjosito/segmentation-iac-app04
+        path: './app04'
     # Log into Azure
     - uses: azure/login@v1
       with:
