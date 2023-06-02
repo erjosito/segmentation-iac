@@ -25,7 +25,7 @@ module globalRCG './rcg-global.bicep' = {
   }
 }
 
-module app01 './app01/app01.bicep' = {
+module app01 '../../app01/bicep/app01.bicep' = {
   name: 'app01'
   params: {
     policyName: policy.name
@@ -34,7 +34,7 @@ module app01 './app01/app01.bicep' = {
   }
 }
 
-module app02 './app02/app02.bicep' = {
+module app02 '../../app02/bicep/app02.bicep' = {
   name: 'app02'
   params: {
     policyName: policy.name
@@ -45,7 +45,7 @@ module app02 './app02/app02.bicep' = {
   dependsOn: [app01]
 }
 
-module app03 './app03/app03.bicep' = {
+module app03 '../../app03/bicep/app03.bicep' = {
   name: 'app03'
   params: {
     policyName: policy.name

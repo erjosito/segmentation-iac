@@ -2,7 +2,7 @@ on:
   push:
     branches: [master]
     paths:
-      - 'AzFWPolicy/ARM/**.json'
+      - '**.json'
 name: Azure ARM - Azure Firewall
 jobs:
   deploy-azfw-policy:
@@ -19,55 +19,59 @@ jobs:
         filters: |
           azfw_any:
             - 'AzFWPolicy/ARM/**'
-          azfw_global:
-            - 'AzFWPolicy/ARM/global/**.json'
-          azfw_global_policy:
-            - 'AzFWPolicy/ARM/global/azfwpolicy.json'
-          azfw_global_rcg:
-            - 'AzFWPolicy/ARM/global/rcg-global.json'
-          azfw_global_ipgroups:
-            - 'AzFWPolicy/ARM/global/ipgroups-global.json'
+          azfw_shared:
+            - 'shared/ARM/**.json'
+          azfw_shared_policy:
+            - 'shared/ARM/azfwpolicy.json'
+          azfw_shared_rcg:
+            - 'shared/ARM/rcg-global.json'
+          azfw_shared_ipgroups:
+            - 'shred/ARM/ipgroups-global.json'
           azfw_app01:
-          - 'AzFWPolicy/ARM/app01/**.json'
+            - 'app01/ARM/**.json'
           azfw_app01_rcg:
-            - 'AzFWPolicy/ARM/app01/rcg-app01.json'
+            - 'app01/ARM/rcg-app01.json'
           azfw_app01_ipgroups:
-            - 'AzFWPolicy/ARM/app01/ipgroups-app01.json'
+            - 'app01/ARM/ipgroups-app01.json'
           azfw_app02:
-            - 'AzFWPolicy/ARM/app02/**.json'
+            - 'app02/ARM/**.json'
           azfw_app02_rcg:
-            - 'AzFWPolicy/ARM/app02/rcg-app02.json'
+            - 'app02/ARM/rcg-app02.json'
           azfw_app02_ipgroups:
-            - 'AzFWPolicy/ARM/app02/ipgroups-app02.json'
+            - 'app02/ARM/ipgroups-app02.json'
           azfw_app03:
-            - 'AzFWPolicy/ARM/app03/**.json'
+            - 'app03/ARM/*.json'
+            - 'app03/dev/ARM/*.json'
+            - 'app03/qa/ARM/*.json'
+            - 'app03/staging/ARM/*.json'
+            - 'app03/prod/ARM/*.json'
         # Log into Azure
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     # Deploy ARM templates for global resources
     - name: Deploy ARM template for global policy
-      if: steps.filter.outputs.azfw_global_policy == 'true'
+      if: steps.filter.outputs.azfw_shared_policy == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/global/azfwpolicy.json
+        template: ./shared/ARM/azfwpolicy.json
         parameters: policyName=TestPolicy
-    - name: Deploy ARM template for global IP groups
-      if: steps.filter.outputs.azfw_global_ipgroups == 'true'
+    - name: Deploy ARM template for shared IP groups
+      if: steps.filter.outputs.azfw_shared_ipgroups == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/global/ipgroups-global.json
+        template: ./shared/ARM/ipgroups-global.json
     - name: Deploy ARM template for global RCG
-      if: steps.filter.outputs.azfw_global_rcg == 'true'
+      if: steps.filter.outputs.azfw_shared_rcg == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/global/rcg-global.json
+        template: ./shared/ARM/rcg-global.json
         parameters: policyName=TestPolicy rcgName=GlobalRCG
       # Deploy ARM templates for app01
     - name: Deploy ARM template for app01 IP groups
@@ -76,14 +80,14 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/app01/ipgroups-app01.json
+        template: ./app01/ARM/ipgroups-app01.json
     - name: Deploy ARM template for app01 RCG
       if: steps.filter.outputs.azfw_app01_rcg == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/app01/rcg-app01.json
+        template: ./app01/ARM/rcg-app01.json
         parameters: policyName=TestPolicy rcgName=app01-RCG
     # Deploy ARM templates for app02
     - name: Deploy ARM template for app02 IP groups
@@ -92,26 +96,26 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/app02/ipgroups-app02.json
+        template: ./app02/ARM/ipgroups-app02.json
     - name: Deploy ARM template for app02 RCG
       if: steps.filter.outputs.azfw_app02_rcg == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/app01/rcg-app02.json
+        template: ./app02/ARM/rcg-app02.json
         parameters: policyName=TestPolicy rcgName=app02-RCG
     # Deploy ARM templates for app03 (aggregate files)
     - name: Deploy ARM template for app03 rule collections (aggregate files)
       if: steps.filter.outputs.azfw_app03 == 'true'
       run: |
-        python3 ./scripts/merge_rcg.py --directory ./AzFWPolicy/ARM/app03 --output-file ./AzFWPolicy/ARM/app03/rcg-merged.json --verbose
+        python3 ./scripts/merge_rcg.py --rcg-file ./app03/ARM/rcg-app03.json --rc-directories "./app03/dev/ARM ./app03/qa/ARM ./app03/staging/ARM ./app03/prod/ARM" --output-file ./app03/ARM/rcg-merged.json --verbose
     - name: Deploy ARM template for merged app03 RCG
       if: steps.filter.outputs.azfw_app03 == 'true'
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./AzFWPolicy/ARM/app03/rcg-merged.json
+        template: ./app03/ARM/app03/rcg-merged.json
         parameters: policyName=TestPolicy rcgName=app03-RCG
   
