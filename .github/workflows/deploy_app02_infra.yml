@@ -1,0 +1,28 @@
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'app02/bicep/nsg*.bicep'
+      - 'app02/bicep/infra*.bicep'
+name: Azure bicep - Azure Firewall - On Push
+jobs:
+  deploy-app02:
+    concurrency:
+      group: deploy_app02
+    runs-on: ubuntu-latest
+    steps:
+    # Checkout local repo
+    - name: Checkout local repo
+      uses: actions/checkout@main
+    # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # Deploy bicep template
+    - name: Deploy bicep template for global policy
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./app02/bicep/infra-app02.bicep
+        parameters: prefix=app02
