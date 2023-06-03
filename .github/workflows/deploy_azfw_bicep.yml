@@ -2,7 +2,7 @@ on:
   push:
     branches: [master]
     paths:
-      - '**/bicep/*.*'
+      - '**/bicep/*.bicep'
 name: Azure bicep - Azure Firewall - On Push
 jobs:
   deploy-azfw-policy:
