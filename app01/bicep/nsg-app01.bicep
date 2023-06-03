@@ -1,5 +1,5 @@
 @description('Name of the Azure Network Security Group')
-param nsgName string = 'app03-prod-nsg'
+param nsgName string = 'app01-prod-nsg'
 param location string = resourceGroup().location
 
 resource app03nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
@@ -12,7 +12,7 @@ resource app03nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
                 properties: {
                     access: 'Allow'
                     description: 'Allows inbound web access to the web servers'
-                    destinationAddressPrefix: '10.10.13.0/28'
+                    destinationAddressPrefix: '10.10.11.0/28'
                     destinationPortRange: '443'
                     direction: 'inbound'
                     priority: 1010
