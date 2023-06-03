@@ -26,14 +26,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check ipgroups_max
-        uses: ./.github/actions/ipgroups_max
+        uses: ./.github/actions/ipgroups_max_arm
         with:
           file_prefix: 'ipgroups'
           file_extension: 'json'
           max_ip_groups: '80'
 
       - name: Check CIDR prefix length
-        uses: ./.github/actions/cidr_prefix_length
+        uses: ./.github/actions/cidr_prefix_length_arm
         with:
           file_prefixes: 'ipgroups rcg'
           file_extension: 'json'

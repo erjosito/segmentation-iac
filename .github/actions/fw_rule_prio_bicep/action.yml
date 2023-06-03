@@ -1,0 +1,33 @@
+# action.yml
+name: 'Validate IP prefix lengths'
+description: 'Validate that IP groups are lower than the limit'
+inputs:
+  file_prefixes:  # prefix of files to check
+    description: 'Prefix of files to check'
+    required: false
+    default: 'rcg'
+  file_extension:  # extension of files to check
+    description: 'Extension of files to check'
+    required: false
+    default: 'bicep'
+  min_prio:  # Minimum priority allowed for a rule collection (group)
+    description: 'Minimum priority allowed for a rule collection (group)'
+    required: false
+    default: '10000'
+  max_prio:  # Maximum priority allowed for a rule collection (group)
+    description: 'Maximum priority allowed for a rule collection (group)'
+    required: false
+    default: '40000'
+  base_dir:  # Directory where to look for files
+    description: 'Source files directory'
+    required: false
+    default: './'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.file_prefixes }}
+    - ${{ inputs.file_extension }}
+    - ${{ inputs.min_prio }}
+    - ${{ inputs.max_prio }}
+    - ${{ inputs.base_dir }}

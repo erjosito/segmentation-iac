@@ -12,9 +12,13 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+
+      - name: Check ipgroups_max
+        uses: ./.github/actions/ipgroups_max_bicep
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
+          file_prefix: 'ipgroups'
+          file_extension: 'bicep'
+          max_ip_groups: '80'
 
       - name: Check CIDR prefix length
         uses: ./.github/actions/cidr_prefix_length_bicep
@@ -22,4 +26,13 @@ jobs:
           file_prefixes: 'ipgroups rcg'
           file_extension: 'bicep'
           min_cidr_length: '24'
+          base_dir: './'
+
+      - name: Check Firewall rule priorities
+        uses: ./.github/actions/fw_rule_prio_bicep
+        with:
+          file_prefixes: 'rcg'
+          file_extension: 'bicep'
+          min_prio: '10000'
+          max_prio: '40000'
           base_dir: './'

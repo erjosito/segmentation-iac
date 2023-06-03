@@ -1,0 +1,26 @@
+# action.yml
+name: 'Validate IP Groups'
+description: 'Validate that IP groups are lower than the limit'
+inputs:
+  file_prefix:  # prefix of files to check
+    description: 'Prefix of files to check'
+    required: false
+    default: 'ipgroups'
+  file_extension:  # extension of files to check
+    description: 'Extension of files to check'
+    required: false
+    default: 'bicep'
+  max_ip_groups:  # Maximum number of IP groups allowed
+    description: 'Maximum number of IP groups allowed'
+    required: false
+    default: '80'
+outputs:
+  number_of_ipgroups: # number of IP groups
+    description: 'The total number of IP groups existing in files processed'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.file_prefix }}
+    - ${{ inputs.file_extension }}
+    - ${{ inputs.max_ip_groups }}
