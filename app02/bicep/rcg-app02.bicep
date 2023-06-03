@@ -14,7 +14,7 @@ resource policyName_rcg 'Microsoft.Network/firewallPolicies/ruleCollectionGroups
           type: 'allow'
         }
         name: 'app02-network'
-        priority: 12100
+        priority: 12110
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         rules: [
           {
