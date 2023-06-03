@@ -25,7 +25,7 @@ module globalRCG './rcg-global.bicep' = {
   }
 }
 
-module app01 '../../app01/bicep/app01.bicep' = {
+module app01 '../../app01/bicep/rcgwrapper-app01.bicep' = {
   name: 'app01'
   params: {
     policyName: policy.name
@@ -34,7 +34,7 @@ module app01 '../../app01/bicep/app01.bicep' = {
   }
 }
 
-module app02 '../../app02/bicep/app02.bicep' = {
+module app02 '../../app02/bicep/rcgwrapper-app02.bicep' = {
   name: 'app02'
   params: {
     policyName: policy.name
@@ -45,7 +45,7 @@ module app02 '../../app02/bicep/app02.bicep' = {
   dependsOn: [app01]
 }
 
-module app03 '../../app03/bicep/app03.bicep' = {
+module app03 '../../app03/bicep/rcgwrapper-app03.bicep' = {
   name: 'app03'
   params: {
     policyName: policy.name
@@ -55,6 +55,7 @@ module app03 '../../app03/bicep/app03.bicep' = {
   dependsOn: [app02]
 }
 
+// This module exists in a different repo, the syntax highlighting error is expected
 module app04 '../../app04/app04/azfw-app04.bicep' = {
   name: 'app04'
   params: {

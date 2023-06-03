@@ -2,27 +2,18 @@ on:
   push:
     branches: [master]
     paths:
-      - '**/ipgroups*.bicep'
-      - '**/rcg*.bicep'
-      - '**/azfwpolicy*.bicep'
-      - '**/rc*.json'
+      - '/app01/nsg*.bicep'
+      - '/app01/infra*.bicep'
 name: Azure bicep - Azure Firewall - On Push
 jobs:
-  deploy-azfw-policy:
+  deploy-app01:
     concurrency:
-      group: deploy_azfw
+      group: deploy_app01
     runs-on: ubuntu-latest
     steps:
     # Checkout local repo
     - name: Checkout local repo
       uses: actions/checkout@main
-    # Checkout remote repo for app04 (the path is important, the bicep template expects to find it there)
-    - name: Checkout app04 repo
-      uses: actions/checkout@v2
-      with:
-        repository: erjosito/segmentation-iac-app04
-        ref: master
-        path: './app04'
     # Log into Azure
     - uses: azure/login@v1
       with:
@@ -33,5 +24,5 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./shared/bicep/azfwpolicy.bicep
-        parameters: policyName=TestPolicyBicep
+        template: ./app01/bicep/infra-app01.bicep
+        parameters: prefix=app01
