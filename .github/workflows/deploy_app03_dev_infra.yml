@@ -24,5 +24,5 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./app03/dev/bicep/infra-app03.bicep
+        template: ./app03/dev/bicep/infra-app03-dev.bicep
         parameters: prefix=app03dev
