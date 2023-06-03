@@ -2,8 +2,8 @@ on:
   push:
     branches: [master]
     paths:
-      - 'app03/nsg*.bicep'
-      - 'app03/infra*.bicep'
+      - 'app03/dev/bicep/nsg*.bicep'
+      - 'app03/dev/bicep/infra*.bicep'
 name: Azure bicep - Azure Firewall - On Push
 jobs:
   deploy-app03-dev:
