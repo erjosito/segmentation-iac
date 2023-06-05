@@ -7,7 +7,7 @@ This repo contains examples of different IaC approaches for network-as-code in A
 
 ## Monorepo vs Multirepo
 
-We will use as well monorepo and multirepo examples. In essence, in a monorepo design all templates will be in the same repository, while in a multirepo design each workload has its own repo. There are many aspects to consider when deciding to go for either monorepo or multirepo, here a brief summary:
+We will use as well monorepo and multirepo examples. In essence, in a monorepo design all templates will be in the same repository, while in a multirepo design each workload has its own repo. There are multiple aspects to consider when deciding to go for either monorepo or multirepo, here is a brief summary:
 
 | | **Monorepo** | **Multirepo** |
 | --- | --- | --- |
@@ -15,18 +15,18 @@ We will use as well monorepo and multirepo examples. In essence, in a monorepo d
 | **Building the templates** | Easy, all the files in one repo | Complex, files across multiple repos need to be put together |
 | **Github workflow management** | Hard, many different actions and workflows in one single repo | Easy, only workflows and actions relevant to one specific workload (and its environments) in any given repo
 
-Whether monorepo or multirepo is best for your organization depends on many things (such as how different departments interact with each other), but lately the industry seems to be converging to multirepo, having all workload-specific configuration (including NSG and firewall rules) in dedicated repositories.
+Whether monorepo or multirepo is best for your organization depends on multiple things (such as how different departments interact with each other), but lately the industry seems to be converging to multirepo, having all workload-specific configuration (including NSG and firewall rules) in dedicated repositories.
 
-This repo covers 4 apps, where 3 of them are using the monorepo pattern, and the last one the multirepo pattern:
+This repo covers 4 apps, 3 of which are using the monorepo pattern, and the last one the multirepo pattern:
 
 - app01, app02, app03: all configured in the same repo (this one, [segmentation-iac](https://github.com/erjosito/segmentation-iac))).
 - app04: configured in a dedicated repo ([segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04)).
 
 ## ARM vs bicep
 
-This repo contains examples of both ARM and bicep. ARM is mostly included to show the additional complexity that ARM-based IaC incurs into, due to its more limited file processing capabilities as compared to bicep:
+This repo contains examples of both ARM and bicep. ARM is mostly included to show the additional complexity that ARM-based IaC generates, due to its more limited file processing capabilities as compared to bicep:
 
-- ARM modularity is quite limited, and you can only define nested templates referring to URLs and not path files
+- ARM modularity is quite limited, and you can only define nested templates referring to URLs and not file paths
 - ARM lacks functions to load JSON/YAML code into templates
 
 This repo is not aiming to deliver a full discussion on different IaC approaches (for example, Terraform is not included), but just on highlighting how the support for certain functionality in your IaC language of choice can drive the complexity of the final repository design.
@@ -40,8 +40,8 @@ We will start the discussion with examples to deploy an Azure Firewall Policy in
 Azure Firewall has a 3-level hierarchy, with some rules and limits (see [Azure Firewall Limits](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits#azure-firewall-limits))that will determine the grouping:
 
 1. Rules: can be application- or network-based
-2. Rule collections (RC): one rule collection can only contain network or application rules, but not both
-3. Rule collection groups (RCG): maximum 60 per policy, maximum 2MB per Rule Collection Group. They constitute a top level Azure resource, meaning that dedicated templates can be for them.
+2. Rule collections (RC): one rule collection can only contain network or application rules, not both
+3. Rule collection groups (RCG): maximum 60 per policy, maximum 2MB per Rule Collection Group. They constitute a top level Azure resource, meaning that a dedicated template can deploy a single or multiple RCGs.
 
 For smaller setups (up to 60 applications), each app can take its own Rule Collection Group. This will enable that each app team gets its own RCG, so that deployments impacting one team will not affect others (since the RCG is an independent resource in Azure).
 
@@ -69,10 +69,10 @@ An alternative approach can be seen in the [app03 ARM directory](./app03/ARM), w
 
 ### Single vs multiple templates
 
-Two different approaches are presented in this repo, mostly derived of the differences between ARM and bicep (Terraform would be closer to bicep than to ARM here) regarding templates:
+Two different approaches are presented in this repo, mostly derived from the differences between ARM and bicep (Terraform would be closer to bicep than to ARM here) regarding templates:
 
-1. Option 1 (recommended): **single template**. This the approach followed in the [bicep directory](shared/bicep/). Whenever anything changes in any of the files, the whole lot is deployed again. Since the templates are idempotent, applying everything shouldn't trigger any change on resources that do not have changes. One benefit of this approach is that the dependencies are taken care of inside of the template, for example making sure that IP groups are created before the rule collection groups, so the [workflow](.github/workflows/check_bicep_code.yml) is kept relatively simple.
-1. Option 2: **multiple templates**. This is the approach followed in the [ARM directory](shared/ARM/). While this approach gives a more granular control on the templates that are deployed, it moves the dependency logic from inside the template to the [Github workflow](.github/workflows/deploy_azfw_arm.yml). ARM doesn't have such an advanced file management mechanism like bicep or Terraform, so if you are going with ARM this might be they only possible approach that allows to keep files separated.
+1. Option 1 (recommended): **single template**. This the approach followed in the [bicep directory](shared/bicep/). Whenever a change occurs in any of the files, the whole setup is deployed again. Since templates are idempotent, re-deploying the whole template shouldn't trigger any change on resources that do not have changes. One benefit of this approach is that the dependencies are taken care of inside the template, for example making sure that IP groups are created before the rule collection groups, so the [workflow](.github/workflows/check_bicep_code.yml) is kept relatively simple.
+1. Option 2: **multiple templates**. This is the approach followed in the [ARM directory](shared/ARM/). While this approach gives a more granular control on the templates deployed, it moves the dependency logic from inside the template to the [Github workflow](.github/workflows/deploy_azfw_arm.yml). ARM doesn't have such an advanced file management mechanism like bicep or Terraform, so if you choose ARM this might be the only possible approach that allows to keep files separated.
 
 ### Use Github actions to validate code
 
@@ -81,7 +81,7 @@ Github actions can be used to validate that the different updates to each files 
 - Shell-based:
     - [ipgroups_max](.github/actions/ipgroups_max/) verifies that the total number of IP Groups defined across the repository doesn't exceed a certain configurable maximum. This example sets the maximum to 80, below the current limit of Azure for 100. This action is using a [shell script](.github/actions/ipgroups_max/entrypoint.sh). Shell-based actions are composed of 4 files:
         - [action.yaml](.github/actions/cidr_prefix_length_bicep/action.yml): inputs and outputs are defined.
-        - [README.md](.github/actions/ipgroups_max_bicep/README.md): documentation for how to use the action (inputs/outputs)
+        - [README.md](.github/actions/ipgroups_max_bicep/README.md): documentation on how to use the action (inputs/outputs)
         - [Dockerfile](.github/actions/cidr_prefix_length_bicep/Dockerfile): this will be used by Github to create a container. It can be the same file for all your shell-based actions.
         - [entrypoint.sh](.github/actions/ipgroups_max_bicep/entrypoint.sh): main logic of the action. It completes successfully if the checks are satisfactory, or with an error (`exit 1`) if checks fail.
 - Python-based:
@@ -89,7 +89,7 @@ Github actions can be used to validate that the different updates to each files 
       - [requirements.txt](.github/actions/cidr_prefix_length_bicep/requirements.txt): Python modules that need to be installed. The [Dockerfile](.github/actions/cidr_prefix_length_bicep/) contains the line `RUN pip3 install -r requirements.txt` to process this file.
   - [cidr_prefix_length_bicep](.github/actions/cidr_prefix_length_bicep/) very similar to the previous one, but in the case of bicep there is no JSON to load. Hence [pycep-parser](https://pypi.org/project/pycep-parser/) needs to be leveraged to transform bicep into JSON before analyzing it. See the [Python script](.github/actions/cidr_prefix_length_bicep/entrypoint.py) for more details.
 
-It is important that you define the file path and extensions that will trigger each check: you don't want to run ARM validation on bicep files or vice versa. In the workflows for [ARM validation](.github/workflows/deploy_azfw_arm.yml) and [bicep validation](.github/workflows/deploy_azfw_bicep.yml) you find examples of this, for example to run the validation only when files in the ARM directory are changed:
+It is important to define the file path and extensions that will trigger each check: you don't want to run ARM validation on bicep files or vice versa. In the workflows for [ARM validation](.github/workflows/deploy_azfw_arm.yml) and [bicep validation](.github/workflows/deploy_azfw_bicep.yml) you find examples of this, for example to run the validation only when files in the ARM directory are changed:
 
 ```yaml
 on:
@@ -116,7 +116,7 @@ The action to validate a template is very similar to the deployment, it only inc
 
 ### Best practice #2: Use protected branches
 
-In order to make sure that your checks are run before every push, you should [protect](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) the main/master branch, so that users always need to go through the Pull Request process, and not push straight into the branches. Different tests and checks will be performed in the PR, and a manual approval should be required before merging the PR.
+In order to ensure your checks are run before every push, you should [protect](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) the main/master branch, so that users always need to go through the Pull Request process, and not push straight into the branches. Different tests and checks will be performed in the PR, and a manual approval should be required before merging the PR.
 
 ![branch protection](./images/branch_protection.png)
 
@@ -124,7 +124,7 @@ When a PR doesn't satisfy all checks, the PR author will see the test results an
 
 ### Continuous deployment or nightly deployments
 
-Once a Pull Request is merged, you can decide to deploy straight into the target environment, or whether to wait and deploy all changes at a fixed time, such as once a day. If you go for the continuous deployment option, your worflow should match both the main/master branch as well as the relevant files:
+Once a Pull Request is merged, you can decide to deploy straight into the target environment, or whether to wait and deploy all changes at a fixed time, such as once a day. If you go for the continuous deployment option, your workflow should match both the main/master branch as well as the relevant files:
 
 ```yaml
 on:
@@ -149,7 +149,7 @@ Azure Firewall doesn't support concurrent operations, so you need to configure y
 
 ## Azure Firewall Policy: shared infra, multirepo
 
-The same concept followed so far can be used as well in multi-repo approaches, where the infra code for other apps is located in remote repositories. In this sample I just checkout the whole remote repository in the workflow. For example, for an `app04` stored in a remote repo `segmentation-iac-app04`, the [bicep workflow](.github/workflows/deploy_azfw_bicep.yml) checks out both the local and the remote repos:
+The same concept followed so far can be used as well in multi-repo approaches, where the infra code for other apps is located in remote repositories. In this sample, we checkout the whole remote repository in the workflow. For example, for an `app04` stored in a remote repo `segmentation-iac-app04`, the [bicep workflow](.github/workflows/deploy_azfw_bicep.yml) checks out both the local and the remote repos:
 
 ```yaml
   # Checkout local repo
@@ -168,7 +168,7 @@ The [bicep template](./shared/bicep/azfwpolicy.bicep) is configured to look for 
 
 ## Network Security Groups: dedicated infra, monorepo
 
-Network Security Groups (NSGs) are an interesting exercise, since opposite to Azure Firewall policies, they are completely distributed.
+Deploying Network Security Groups (NSGs) as code is an interesting exercise, since conversely to Azure Firewall policies, they are distributed in different subscriptions/landing zones.
 
 For example, [infra-app01.bicep](app01/bicep/infra-app01.bicep) contains the infrastructure specific to app01 (in this example only an NSG). In the NSG module [nsg-app01.bicep](app01/bicep/nsg-app01.bicep) you can see the module `sharedInboundRules`, which gets some rules from the [shared](shared/bicep/) folder of the repo.
 
@@ -201,9 +201,9 @@ Here the relevant code of the deploy workflow [deploy_app02_infra.yml](.github/w
 
 ## Network Security Groups: dedicated infra, multirepo
 
-Looking at our application `app04` with a separate repository ([segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04)), this application will be deployed in a different subscription, with a different Virtual Network, and of course different NSGs.
+Looking at our application `app04` with a separate repository ([segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04)), this application will be deployed in a different subscription, with a different Virtual Network, and of course different NSGs (making up a dedicated landing zone).
 
-The Azure credentials, including the subscription ID and resource group for `app04` are stored in the secrets of that repo. NSGs should be deployed in the same subscription as the VNet, and hence it is only logical that the deployment workflow runs in the `app04`'s repo (the repo with the shared resources shouldn't need the credentials to the workload's subscription). And yet, the shared repo might contain some required information.
+The Azure credentials, including the subscription ID and resource group for `app04` are stored in the secrets of that repo. NSGs should be deployed in the same subscription as the VNet, hence it is logical that the deployment workflow runs in the `app04`'s repo (the repo with the shared resources shouldn't need the credentials to the workload's subscription). And yet, the shared repo might contain some required information.
 
 In this example, the shared repo contains some [common NSG rules](./shared/bicep/nsg-shared-inbound-rules.bicep) that are to be inserted in every NSG for all workloads. Consequently, the [workflow in segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04/blob/master/.github/workflows/deploy_prod_nsg_bicep.yml) checks out the shared repo as well, and the [NSG bicep template](https://github.com/erjosito/segmentation-iac-app04/blob/master/app04/prod/nsg-app04-prod.bicep) contains a module to be found in the folder where the shared repo is cloned.
 
@@ -213,7 +213,7 @@ After running the template, you can see that the NSG is created with the rules c
 
 # Conclusion
 
-This repo has demonstrated multiple concepts, such as the following:
+This repo has demonstrated multiple concepts, such as:
 
 - Sharing info across repositories for centralized and distributed resources
 - Custom checks using shell and Python scripts
