@@ -29,9 +29,11 @@ This repo contains examples of both ARM and bicep. ARM is mostly included to sho
 - ARM modularity is quite limited, and you can only define nested templates referring to URLs and not path files
 - ARM lacks functions to load JSON/YAML code into templates
 
+This repo is not aiming to deliver a full discussion on different IaC approaches (for example, Terraform is not included), but just on highlighting how the support for certain functionality in your IaC language of choice can drive the complexity of the final repository design.
+
 ## Azure Firewall Policy: shared infra, monorepo
 
-We will start the discussion with examples to deploy an Azure Firewall Policy in a monorepo design. As described earlier, the Azure Firewall policy is a resource that is centrally deployed in the connectivity subscription.
+We will start the discussion with examples to deploy an Azure Firewall Policy in a monorepo design (with three workloads app01, app02, app03). As described earlier, the Azure Firewall policy is a resource that is centrally deployed in the connectivity subscription.
 
 ### Azure Firewall Policy hierarchy design
 
@@ -53,7 +55,7 @@ Some remarks:
 
 - For each workload, a single rule collection group implements all environments and both network and application rules (a single rule collection cannot contain a combination of both)
 - Some workloads will not have multiple environments, or some workloads will not require both network and application rules
-- The rule collection group template for each workload will be stored in the workload's folder (for monorepo designs, in this example app01, app02 and app03) or in the workload's repo (for multirepo design, in this example app04).
+- The rule collection group template for each workload will be stored in the workload's folder (for monorepo designs, in this example [app01](app01/bicep/rcgwrapper-app01.bicep), [app02](app02/bicep/rcgwrapper-app02.bicep) and [app03](app03/bicep/rcgwrapper-app03.bicep)) or in the workload's repo (for multirepo design, in this example [app04](https://github.com/erjosito/segmentation-iac-app04/blob/master/app04/azfw-app04.bicep)).
 
 ### Best practice #1: Use separate files
 
