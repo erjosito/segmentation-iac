@@ -3,7 +3,14 @@ on:
     branches:
       - master
     paths:
-      - '**.bicep'
+      - 'shared/bicep/*.*'
+      - 'app01/bicep/*.*'
+      - 'app02/bicep/*.*'
+      - 'app03/bicep/*.*'
+      - 'app03/dev/bicep/*.*'
+      - 'app03/qa/bicep/*.*'
+      - 'app03/staging/bicep/*.*'
+      - 'app03/prod/bicep/*.*'
 name: Check correctness of bicep templates
 jobs:
   lint:
@@ -45,18 +52,37 @@ jobs:
           repository: erjosito/segmentation-iac-app04
           ref: master
           path: './app04'
+      # Expand app02's CSV file with NSG rules to JSON
+      - name: Expand CSV file with NSG rules to JSON
+        run: |
+          python3 ./scripts/nsg_csv_to_json.py --csv-file ./app02/bicep/nsg-rules-app02.csv --output-file ./app02/bicep/nsg-rules-app02.json --verbose
+      # Login
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Validate templates
       - uses: azure/arm-deploy@v1
-        name: Run preflight validation
+        name: Run preflight validation for shared infra
+        with:
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./shared/bicep/azfwpolicy.bicep
+          deploymentMode: Validate
+      - uses: azure/arm-deploy@v1
+        name: Run preflight validation for app01 infra
         with:
           resourceGroupName: ${{ secrets.AZURE_RG }}
           template: ./app01/bicep/infra-app01.bicep
           deploymentMode: Validate
       - uses: azure/arm-deploy@v1
-        name: Run preflight validation
+        name: Run preflight validation for app02 infra
         with:
           resourceGroupName: ${{ secrets.AZURE_RG }}
-          template: ./shared/bicep/azfwpolicy.bicep
+          template: ./app01/bicep/infra-app02.bicep
           deploymentMode: Validate
+      - uses: azure/arm-deploy@v1
+        name: Run preflight validation for app03 DEV infra
+        with:
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./app03/dev/bicep/infra-app03-dev.bicep
+          deploymentMode: Validate
+  
