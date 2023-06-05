@@ -3,6 +3,7 @@ on:
     branches: [master]
     paths:
       - 'app02/bicep/nsg*.bicep'
+      - 'app02/bicep/nsg*.csv'
       - 'app02/bicep/infra*.bicep'
 name: Azure bicep - Azure Firewall - On Push
 jobs:
