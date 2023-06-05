@@ -14,6 +14,10 @@ jobs:
     # Checkout local repo
     - name: Checkout local repo
       uses: actions/checkout@main
+    # Expand CSV file with NSG rules to JSON
+    - name: Expand CSV file with NSG rules to JSON
+      run: |
+      python3 ./scripts/nsg_csv_to_json.py --csv-file ./app02/bicep/nsg-rules-app02.csv --output-file ./app02/bicep/nsg-rules-app02.json --verbose
     # Log into Azure
     - uses: azure/login@v1
       with:

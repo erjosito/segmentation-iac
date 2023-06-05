@@ -2,27 +2,12 @@
 param nsgName string = 'app01-prod-nsg'
 param location string = resourceGroup().location
 
+var securityRules = loadJsonContent('./nsg-rules-app02.json')
+
 resource app03nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
     name: nsgName
     location: location
-    properties: {
-        securityRules: [
-            {
-                name: 'anyToWeb-inbound'
-                properties: {
-                    access: 'Allow'
-                    description: 'Allows inbound web access to the web servers'
-                    destinationAddressPrefix: '10.10.11.0/28'
-                    destinationPortRange: '443'
-                    direction: 'inbound'
-                    priority: 1010
-                    protocol: 'TCP'
-                    sourceAddressPrefix: '*'
-                    sourcePortRange: '*'
-                }
-            }
-        ]
-    }
+    properties: securityRules
 }
 
 // Deploy shared NSG rules
