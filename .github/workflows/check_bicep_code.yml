@@ -36,3 +36,27 @@ jobs:
           min_prio: '10000'
           max_prio: '40000'
           base_dir: './'
+
+      # Validate templates
+      # Checkout remote repo for app04 (the path is important, the AzFW bicep template expects to find it there)
+      - name: Checkout app04 repo
+        uses: actions/checkout@v2
+        with:
+          repository: erjosito/segmentation-iac-app04
+          ref: master
+          path: './app04'
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: azure/arm-deploy@v1
+        name: Run preflight validation
+        with:
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./app01/bicep/infra-app01.bicep
+          deploymentMode: Validate
+      - uses: azure/arm-deploy@v1
+        name: Run preflight validation
+        with:
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./shared/bicep/azfwpolicy.bicep
+          deploymentMode: Validate
