@@ -5,6 +5,8 @@ This repo contains examples of different IaC approaches for network-as-code in A
 - Azure Firewall Policy: deployed centrally into the connectivity subscription where the Azure Firewall resides, but needs input from each workload (the firewall admin relies on the workload admins to define the rules required by each workload to work properly).
 - Network Security Groups: deployed in a distributed manner in the workload's subscription, but needs shared rules required by compliance (for example, having an explicit `deny` after the `allow` rules).
 
+## Monorepo vs Multirepo
+
 We will use as well monorepo and multirepo examples. In essence, in a monorepo design all templates will be in the same repository, while in a multirepo design each workload has its own repo. There are many aspects to consider when deciding to go for either monorepo or multirepo, here a brief summary:
 
 | | **Monorepo** | **Multirepo** |
@@ -14,6 +16,13 @@ We will use as well monorepo and multirepo examples. In essence, in a monorepo d
 | **Github workflow management** | Hard, many different actions and workflows in one single repo | Easy, only workflows and actions relevant to one specific workload (and its environments) in any given repo
 
 Whether monorepo or multirepo is best for your organization depends on many things (such as how different departments interact with each other), but lately the industry seems to be converging to multirepo, having all workload-specific configuration (including NSG and firewall rules) in dedicated repositories.
+
+This repo covers 4 apps, where 3 of them are using the monorepo pattern, and the last one the multirepo pattern:
+
+- app01, app02, app03: all configured in the same repo (this one, [segmentation-iac](https://github.com/erjosito/segmentation-iac))).
+- app04: configured in a dedicated repo ([segmentation-iac-app04](https://github.com/erjosito/segmentation-iac-app04)).
+
+## ARM vs bicep
 
 This repo contains examples of both ARM and bicep. ARM is mostly included to show the additional complexity that ARM-based IaC incurs into, due to its more limited file processing capabilities as compared to bicep:
 
