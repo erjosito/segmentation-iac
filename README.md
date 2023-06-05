@@ -2,7 +2,7 @@
 
 This repo contains examples of different IaC approaches for network-as-code in Azure. To illustrate different approaches and techniques this repo will focus on Azure network segmentation technologies, namely:
 
-- Azure Firewall: deployed centrally into the connectivity subscription where the Azure resides, but needs input from each workload.
+- Azure Firewall Policy: deployed centrally into the connectivity subscription where the Azure Firewall resides, but needs input from each workload (the firewall admin relies on the workload admins to define the rules required by each workload to work properly).
 - Network Security Groups: deployed in a distributed manner in the workload's subscription, but needs shared rules required by compliance (for example, having an explicit `deny` after the `allow` rules).
 
 We will use as well monorepo and multirepo examples. In essence, in a monorepo design all templates will be in the same repository, while in a multirepo design each workload has its own repo. There are many aspects to consider when deciding to go for either monorepo or multirepo, here a brief summary:
