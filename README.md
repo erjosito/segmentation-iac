@@ -13,6 +13,8 @@ We will use as well monorepo and multirepo examples. In essence, in a monorepo d
 | **Building the templates** | Easy, all the files in one repo | Complex, files across multiple repos need to be put together |
 | **Github workflow management** | Hard, many different actions and workflows in one single repo | Easy, only workflows and actions relevant to one specific workload (and its environments) in any given repo
 
+Whether monorepo or multirepo is best for your organization depends on many things (such as how different departments interact with each other), but lately the industry seems to be converging to multirepo, having all workload-specific configuration (including NSG and firewall rules) in dedicated repositories.
+
 This repo contains examples of both ARM and bicep. ARM is mostly included to show the additional complexity that ARM-based IaC incurs into, due to its more limited file processing capabilities as compared to bicep:
 
 - ARM modularity is quite limited, and you can only define nested templates referring to URLs and not path files
