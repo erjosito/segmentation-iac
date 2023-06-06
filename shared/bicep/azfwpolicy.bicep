@@ -74,8 +74,9 @@ module vwan './vwan/vwan.bicep' = if(deployVWAN) {
     vWANlocation: location
     hub1Location: location
     hub2Location: location
-    firewallType: 'Standard'
+    firewallTier: 'Standard'
     FirewallPolicyId: policy.id
+
   }
   // To deploy VWAN after the policy is finished
   dependsOn: [app04]
