@@ -68,9 +68,8 @@ module app04 '../../app04/app04/azfw-app04.bicep' = {
 }
 
 // Deploy VWAN with Firewalls associated to the policy
-module vwan './vwan/vwan.bicep' = {
+module vwan './vwan/vwan.bicep' = if(deployVWAN) {
   name: 'vwan'
-  if: deployVWAN
   params: {
     vWANlocation: location
     hub1Location: location
