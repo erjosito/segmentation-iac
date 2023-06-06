@@ -14,6 +14,8 @@ This repo contains examples of different IaC approaches for Network-as-Code in A
 - Azure Firewall Policy: deployed centrally into the connectivity subscription where the Azure Firewall resides, but needs input from each workload (the firewall admin relies on the workload admins to define the rules required by each workload to work properly).
 - Network Security Groups: deployed in a distributed manner in the workload's subscription, but needs shared rules required by compliance (for example, having an explicit `deny` after the `allow` rules).
 
+This repo should be looked at as a collection of recipes that will help implementing certain aspects of the IaC toolchain. For that purpose, it contains multiple implementations to achieve the same goal (for example monorepo and multirepo, ARM and bicep, Azure Policy and in-pipeline scripts). Hence, it is not to be considered as a best-practices repo.
+
 ### Centralization of networking configuration doesn't scale
 
 Some organization have traditionally centralized all networking configuration in a single team, the network admins. The most typical example is the administration of firewalls: in order to get a port open in the firewall, the application team needs to open a ticket so that the firewall configures the firewall accordingly. This approach suffers from many problems:
@@ -86,6 +88,14 @@ Ideally you can separate files at resource boundaries. For example, you can have
 You might need to be more specific. For example, if with the previous scheme you ended up with more than 60 rule collection groups, that wouldn't be supported by Azure Firewall today (check [Azure Limits](https://aka.ms/azurelimit)). You could partition a single Azure resource (the rule collection group in this example) in multiple files, for example using the Azure bicep functions [loadJsonContent](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-files#loadjsoncontent) and [loadYamlContent](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/bicep-functions-files#loadyamlcontent). You can see an example of this setup in this repo, in the [app03 folder](app03/bicep/rcg-app03.bicep), where app03's RCG loads up the the rule collections for each environment (test, qa, staging and prod) from a JSON file specific to each environment.
 
 An alternative approach can be seen in the [app03 ARM directory](./app03/ARM), where the script [merge_rcg.py](scripts/merge_rcg.py) consolidates the different files into a single one.
+
+### Application environment configuration drift
+
+In this repo we are using different files for each environment in the same app (see for example the [app03 directory](./app03/)). The upside for this approach is that each environment is kept separately, and pipelines are only triggered when the corresponding file is modified. For example, changing the test environment file will not trigger a deployment in the production environment.
+
+Additionally, from a networking perspective each environment has different IP addresses, so most of the configuration is going to be different as well.
+
+The downside of this approach is the potential for configuration drift across environments. An alternative approach would be having some common files across the environments, and only modify the values unique to each of them (like IP addresses). While eliminating drift, this approach makes it much harder to try things out in a test environment without impacting production.
 
 ### Single vs multiple templates
 
