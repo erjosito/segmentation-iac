@@ -1,0 +1,100 @@
+{
+    "mode": "All",
+    "parameters": {
+        "asgId": {
+            "type": "String",
+            "defaultValue": "/subscriptions/e7da9914-9b05-4891-893c-546cb7b0422e/resourceGroups/AZFWAPPGW/providers/Microsoft.Network/applicationSecurityGroups/linux"
+        }
+    },
+    "policyRule": {
+        "if": {
+            "allOf": [
+                {
+                    "field": "type",
+                    "equals": "Microsoft.Compute/virtualMachines"
+                },
+                {
+                    "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+                    "equals": "Linux"
+                }
+            ]
+        },
+        "then": {
+            "effect": "deployIfNotExists",
+            "details": {
+                "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                ],
+                "type": "Microsoft.Network/networkInterfaces",
+                "name": "current",
+                "evaluationDelay": "AfterProvisioning",
+                "existenceCondition": {
+                    "field": "Microsoft.Compute/virtualMachines/networkProfile.networkInterfaceConfigurations[*].ipConfigurations[*].applicationSecurityGroups",
+                    "equals": "[parameters('asgId')]]"
+                },
+                "deployment": {
+                    "properties": {
+                        "mode": "incremental",
+                        "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                                "nicArray": {
+                                    "type": "array"
+                                },
+                                "location": {
+                                    "type": "string"
+                                }
+                            },
+                            "variables": {
+                                "asg_id": "/subscriptions/e7da9914-9b05-4891-893c-546cb7b0422e/resourceGroups/AZFWAPPGW/providers/Microsoft.Network/applicationSecurityGroups/linux"
+                            },
+                            "resources": [
+                                {
+                                    "type": "Microsoft.Network/networkInterfaces",
+                                    "apiVersion": "2022-05-01",
+                                    "copy": {
+                                        "name": "nicLoop",
+                                        "count": "[length(parameters('nicArray'))]"
+                                    },
+                                    "name": "[parameters('nicArray')[copyIndex()]['name']]",
+                                    "location": "[parameters('location')]",
+                                    "properties": {
+                                        "ipConfigurations": [
+                                            {
+                                                "name": "[parameters('nicArray')[copyIndex()]['ipConfigurations'][0]['name']]",
+                                                "properties": {
+                                                    "applicationSecurityGroups": {
+                                                        "id": "[variables('asg_id')]"
+                                                    },
+                                                    "subnet": {
+                                                        "id": "[parameters('nicArray')[copyIndex()]['ipConfigurations'][0]['properties']['subnet']['id']]"
+                                                    },
+                                                    "privateIPAllocationMethod": "[parameters('nicArray')[copyIndex()]['ipConfigurations'][0]['properties']['privateIPAllocationMethod']]",
+                                                    "publicIPAddress": "[parameters('nicArray')[copyIndex()]['ipConfigurations'][0]['properties']['publicIPAddress']]"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "dependsOn": []
+                                }
+                            ],
+                            "outputs": {}
+                        },
+                        "parameters": {
+                            "location": {
+                                "value": "[field('location')]"
+                            },
+                            "nicArray": {
+                                "value": "[field('Microsoft.Compute/virtualMachines/networkProfile.networkInterfaceConfigurations[*]')]"
+                            },
+                            "asgId": {
+                                "value": "[parameters('asgId')]"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

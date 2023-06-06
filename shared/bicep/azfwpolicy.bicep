@@ -2,6 +2,7 @@
 param policyName string
 
 param location string = resourceGroup().location
+param deployVWAN bool = false
 
 resource policy 'Microsoft.Network/firewallPolicies@2021-08-01' = {
   location: location
@@ -64,4 +65,19 @@ module app04 '../../app04/app04/azfw-app04.bicep' = {
   }
   // RCGs should be deployed sequentially
   dependsOn: [app03]
+}
+
+// Deploy VWAN with Firewalls associated to the policy
+module vwan './vwan/vwan.bicep' = {
+  name: 'vwan'
+  if: deployVWAN
+  params: {
+    vWANlocation: location
+    hub1Location: location
+    hub2Location: location
+    firewallType: 'Standard'
+    FirewallPolicyId: policy.id
+  }
+  // To deploy VWAN after the policy is finished
+  dependsOn: [app04]
 }

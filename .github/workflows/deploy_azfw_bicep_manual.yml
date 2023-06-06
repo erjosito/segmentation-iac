@@ -30,4 +30,4 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./shared/bicep/azfwpolicy.bicep
-        parameters: policyName=TestPolicyBicep
+        parameters: policyName=TestPolicyBicep deployVWAN=true

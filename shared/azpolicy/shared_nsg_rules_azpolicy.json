@@ -181,7 +181,9 @@
                 "TCP",
                 "UDP",
                 "ICMP",
-                "Any"
+                "ESP",
+                "AH",
+                "*"
               ]
         },
         "ruleSourceAddressPrefix": {
