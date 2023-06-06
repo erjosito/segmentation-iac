@@ -1,13 +1,32 @@
 # Azure Network Segmentation Infrastructure as Code
 
-This repo contains examples of different IaC approaches for network-as-code in Azure. To illustrate different approaches and techniques this repo will focus on Azure network segmentation technologies, namely:
+## Why this repo
+
+Infrastructure-as-Code (IaC) is a practice recommended by many organizations, but the details of how to implement it are not clear. The basis of IaC are idempotent, declarative infrastructure templates written in a language such as ARM, bicep or Terraform organized in version control repositories such as Azure DevOps or GitHub. However, how to govern those repositories and control the deployment of those templates is an area where not much documentation exists.
+
+There are some challenges common to all IaC domains, such as testing and validation of infrastructure templates before deployment. Additionally, Networking IaC (also called Network-as-Code, although NaC is an overloaded acronym in the networking industry) presents some specific problems due to the distributed nature of networking:
+
+- Networking in Azure Landing Zones is distributed across the different landing zones and the centralized connectivity subscription
+- The central network admin team typically has no knowledge of the specifics of each application, so it is down to the application owners to document those even if networking is not their main area of expertise.
+
+This repo contains examples of different IaC approaches for Network-as-Code in Azure to solve the challenges described in the previous paragraphs. To illustrate different approaches and techniques this repo will focus on Azure network segmentation technologies, namely:
 
 - Azure Firewall Policy: deployed centrally into the connectivity subscription where the Azure Firewall resides, but needs input from each workload (the firewall admin relies on the workload admins to define the rules required by each workload to work properly).
 - Network Security Groups: deployed in a distributed manner in the workload's subscription, but needs shared rules required by compliance (for example, having an explicit `deny` after the `allow` rules).
 
+### Centralization of networking configuration doesn't scale
+
+Some organization have traditionally centralized all networking configuration in a single team, the network admins. The most typical example is the administration of firewalls: in order to get a port open in the firewall, the application team needs to open a ticket so that the firewall configures the firewall accordingly. This approach suffers from many problems:
+
+- The app team needs to wait until the firewall admin implement changes
+- If there are many applications in an organization, the firewall team will just blindly implement whatever is asked (unless it goes against the company security policy), ending up in rules that open unnecessary attack surface
+- The firewall team has no knowledge of whether the configured ports are really required, which ends up in most firewall configs being obsolete and overly complex with time
+
+Ideally, each app team should be able to define their networking requirements with code, and these requirements would be converted in firewall configuration automatically. However, there has to be some control on how these networking requirements are defined, so there need to be some guardrails and validation to make sure that the organization security policies are complied with.
+
 ## Monorepo vs Multirepo
 
-We will use as well monorepo and multirepo examples. In essence, in a monorepo design all templates will be in the same repository, while in a multirepo design each workload has its own repo. There are multiple aspects to consider when deciding to go for either monorepo or multirepo, here is a brief summary:
+The first decision that every IaC (or actually DevOps) architect needs to take is whether (infrastructure) code is going to be arranged in a single repository for the whole organization, or distributed in different repositories owned each by a different application team. In essence, in a monorepo design all IaC templates will be in the same version control repository, while in a multirepo design each workload has its own repo. There are multiple aspects to consider when deciding to go for either monorepo or multirepo, here is a brief summary:
 
 | | **Monorepo** | **Multirepo** |
 | --- | --- | --- |
@@ -56,6 +75,7 @@ Some remarks:
 - For each workload, a single rule collection group implements all environments and both network and application rules (a single rule collection cannot contain a combination of both)
 - Some workloads will not have multiple environments, or some workloads will not require both network and application rules
 - The rule collection group template for each workload will be stored in the workload's folder (for monorepo designs, in this example [app01](app01/bicep/rcgwrapper-app01.bicep), [app02](app02/bicep/rcgwrapper-app02.bicep) and [app03](app03/bicep/rcgwrapper-app03.bicep)) or in the workload's repo (for multirepo design, in this example [app04](https://github.com/erjosito/segmentation-iac-app04/blob/master/app04/azfw-app04.bicep)).
+- The model shown with the app03 app (rule collections for multiple apps/environments in separate files, that at deployment time are consolidated into a single template) can be followed by large organizations with hundreds of applications. Instead of having a RCG per app, these apps would be arranged in Lines of Business (LoB), and you would have an RCG per LoB. Inside of each RCG, each app environment would get its own rule collection, which would be merged into a single RCG bicep template for deployment.
 
 ### Best practice #1: Use separate files
 

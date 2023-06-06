@@ -1,0 +1,200 @@
+{
+    "mode": "All",
+    "policyRule": {
+        "if": {
+            "field": "type",
+            "equals": "Microsoft.Network/networkSecurityGroups"
+        },
+        "then": {
+            "effect": "[parameters('effect')]",
+            "details": {
+                "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+                "roleDefinitionIds": [
+                    "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+                  ],
+                "existenceCondition": {
+                    "allOf": [
+                        {
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules/access",
+                            "equals": "[parameters('ruleAccess')]"
+                        },
+                        {
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules/direction",
+                            "equals": "[parameters('ruleDirection')]"
+                        },
+                        {
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules/priority",
+                            "equals": "[parameters('rulePriority')]"
+                        }
+                    ]
+                },
+                "deployment": {
+                    "properties": {
+                        "mode": "incremental",
+                        "parameters": {
+                            "nsgName": {
+                                "value": "[field('name')]"
+                            },
+                            "ruleName": {
+                                "value": "[parameters('ruleName')]"
+                            },
+                            "ruleAccess": {
+                                "value": "[parameters('ruleAccess')]"
+                            },
+                            "ruleDescription": {
+                                "value": "[parameters('ruleDescription')]"
+                            },
+                            "rulePriority": {
+                                "value": "[parameters('rulePriority')]"
+                            },
+                            "ruleDirection": {
+                                "value": "[parameters('ruleDirection')]"
+                              },
+                            "ruleProtocol": {
+                                "value": "[parameters('ruleProtocol')]"
+                            },
+                            "ruleSourceAddressPrefix": {
+                                "value": "[parameters('ruleSourceAddressPrefix')]"
+                            },
+                            "ruleSourcePortRange": {
+                                "value": "[parameters('ruleSourcePortRange')]"
+                            },
+                            "ruleDestinationAddressPrefix": {
+                                "value": "[parameters('ruleDestinationAddressPrefix')]"
+                            },
+                            "ruleDestinationPortRange": {
+                                "value": "[parameters('ruleDestinationPortRange')]"
+                            }
+                        },
+                        "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {
+                                "nsgName": {
+                                    "type": "String"
+                                },
+                                "ruleName": {
+                                    "type": "String"
+                                },
+                                "ruleAccess": {
+                                    "type": "String",
+                                    "allowedValues": [
+                                        "deny",
+                                        "allow"
+                                      ]
+                                },
+                                "ruleDescription": {
+                                    "type": "String"
+                                },
+                                "rulePriority": {
+                                    "type": "Integer"
+                                },
+                                "ruleDirection": {
+                                    "type": "String",
+                                    "allowedValues": [
+                                        "inbound",
+                                        "outbound"
+                                      ]
+                                },
+                                "ruleProtocol": {
+                                    "type": "String"
+                                },
+                                "ruleSourceAddressPrefix": {
+                                    "type": "String"
+                                },
+                                "ruleSourcePortRange": {
+                                    "type": "String"
+                                },
+                                "ruleDestinationAddressPrefix": {
+                                    "type": "String"
+                                },
+                                "ruleDestinationPortRange": {
+                                    "type": "String"
+                                }
+                            },
+                            "variables": {
+                                "apiVersion": "2022-11-01"
+                            },
+                            "resources": [
+                                {
+                                    "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+                                    "apiVersion": "2022-07-01",
+                                    "name": "[concat(parameters('nsgName'), '/', parameters('ruleName'))]",
+                                    "properties": {
+                                        "access": "[parameters('ruleAccess')]",
+                                        "description": "[parameters('ruleDescription')]",
+                                        "priority": "[parameters('rulePriority')]",
+                                        "direction": "[parameters('ruleDirection')]",
+                                        "protocol": "[parameters('ruleProtocol')]",
+                                        "sourceAddressPrefix": "[parameters('ruleSourceAddressPrefix')]",
+                                        "sourcePortRange": "[parameters('ruleSourcePortRange')]",
+                                        "destinationAddressPrefix": "[parameters('ruleDestinationAddressPrefix')]",
+                                        "destinationPortRange": "[parameters('ruleDestinationPortRange')]"
+                                    }
+                                }
+                            ]
+                        }
+                    }    
+                }
+            }
+        }
+    },
+    "parameters": {
+        "effect": {
+            "type": "String",
+            "metadata": {
+              "displayName": "Effect",
+              "description": "Enable or disable the execution of the policy"
+            },
+            "allowedValues": [
+              "DoNotEnforce",
+              "deployIfNotExists"
+            ],
+            "defaultValue": "deployIfNotExists"
+        },
+        "ruleName": {
+            "type": "String"
+        },
+        "ruleAccess": {
+            "type": "String",
+            "allowedValues": [
+                "deny",
+                "allow"
+              ]
+        },
+        "ruleDescription": {
+            "type": "String"
+        },
+        "rulePriority": {
+            "type": "Integer"
+        },
+        "ruleDirection": {
+            "type": "String",
+            "allowedValues": [
+                "inbound",
+                "outbound"
+              ]
+          },
+        "ruleProtocol": {
+            "type": "String",
+            "allowedValues": [
+                "TCP",
+                "UDP",
+                "ICMP",
+                "Any"
+              ]
+        },
+        "ruleSourceAddressPrefix": {
+            "type": "String"
+        },
+        "ruleSourcePortRange": {
+            "type": "String"
+        },
+        "ruleDestinationAddressPrefix": {
+            "type": "String"
+        },
+        "ruleDestinationPortRange": {
+            "type": "String"
+        }
+    }
+}
