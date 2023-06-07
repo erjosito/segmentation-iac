@@ -32,3 +32,5 @@ module sharedInboundRules '../../shared/bicep/nsg-shared-inbound-rules.bicep' = 
     nsgName: app03nsg.name
   }
 }
+
+output id string = app03nsg.id

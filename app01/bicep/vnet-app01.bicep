@@ -1,5 +1,6 @@
 param vnetName string = 'vnet1'
 param vnetAddressPrefix string = '10.11.11.0/24'
+param nsgId string
 param subnets array = [
   {
     name: 'subnet1'
@@ -31,6 +32,9 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2022-11-01' = [for su
     delegations: []
     privateEndpointNetworkPolicies: 'Disabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
+    networkSecurityGroup: {
+      id: nsgId
+    }
   } 
 }]
 

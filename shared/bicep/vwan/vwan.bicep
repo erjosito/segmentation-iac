@@ -23,7 +23,7 @@ var hub1FirewallName = '${vWANname}-${hub1Name}-AzFW'
 var zonesForHub1Firewall = useZonesForHub1Firewall ? ['1','2','3']: []
 var VpnGatewayScaleUnit = 1
 var ErGatewayScaleUnit = 1
-
+var vnets = loadYamlContent('vwan_cx_vnets.yml')
 
 resource vWAN 'Microsoft.Network/virtualWans@2022-11-01' = {
   name: vWANname
@@ -236,3 +236,18 @@ resource LogAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-12
     publicNetworkAccessForQuery: 'Enabled'
   }
 }
+
+resource Hub1VNetConnections 'Microsoft.Network/virtualHubs/hubVirtualNetworkConnections@2022-11-01' = [for vnet in vnets: {
+  parent: vWANHub1
+  name: '${hub1Name}-to-${vnet.name}}'
+  properties: {
+    remoteVirtualNetwork: {
+      id: resourceId(vnet.rg, 'Microsoft.Network/virtualNetworks', )
+    }
+    allowHubToRemoteVnetTransit: true
+    allowRemoteVnetToUseHubVnetGateways: true
+    enableInternetSecurity: true
+  }
+  #disable-next-line no-unnecessary-dependson // This is required to avoid conflicts in vWAN RP, some resources must be created in a certain order
+  dependsOn: [hub1Firewall]
+}]
