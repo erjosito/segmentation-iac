@@ -2,7 +2,7 @@
 param nsgName string = 'app01-prod-nsg'
 param location string = resourceGroup().location
 
-resource app03nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
+resource app01nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
     name: nsgName
     location: location
     properties: {
@@ -29,8 +29,8 @@ resource app03nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
 module sharedInboundRules '../../shared/bicep/nsg-shared-inbound-rules.bicep' = {
   name: 'in-rules-deploy'
   params: { 
-    nsgName: app03nsg.name
+    nsgName: app01nsg.name
   }
 }
 
-output id string = app03nsg.id
+output id string = app01nsg.id

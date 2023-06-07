@@ -1,2 +1,4 @@
-- name: vnet1
+- name: app01-vnet
+  rg: segmentation-iac
+- name: app02-vnet
   rg: segmentation-iac
