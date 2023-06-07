@@ -12,7 +12,7 @@ resource explicitAllowLBInbound 'Microsoft.Network/networkSecurityGroups/securit
     destinationPortRange: '*'
     direction: dir
     priority: 4094
-    protocol: 'Icmp'
+    protocol: '*'
     sourceAddressPrefix: '168.63.129.16'
     sourcePortRange: '*'
   }

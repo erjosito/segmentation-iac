@@ -1,4 +1,4 @@
-# Azure Network Segmentation Infrastructure as Code
+# Hack Cookbook for Networking-as-Code in GitHub
 
 ## Why this repo
 
@@ -109,14 +109,14 @@ Two different approaches are presented in this repo, mostly derived from the dif
 Github actions can be used to validate that the different updates to each files don't break your rules. In this repo you can find some examples for validation actions:
 
 - Shell-based:
-    - [ipgroups_max](.github/actions/ipgroups_max/) verifies that the total number of IP Groups defined across the repository doesn't exceed a certain configurable maximum. This example sets the maximum to 80, below the current limit of Azure for 100. This action is using a [shell script](.github/actions/ipgroups_max/entrypoint.sh). Shell-based actions are composed of 4 files:
-        - [action.yaml](.github/actions/cidr_prefix_length_bicep/action.yml): inputs and outputs are defined.
-        - [README.md](.github/actions/ipgroups_max_bicep/README.md): documentation on how to use the action (inputs/outputs)
-        - [Dockerfile](.github/actions/cidr_prefix_length_bicep/Dockerfile): this will be used by Github to create a container. It can be the same file for all your shell-based actions.
-        - [entrypoint.sh](.github/actions/ipgroups_max_bicep/entrypoint.sh): main logic of the action. It completes successfully if the checks are satisfactory, or with an error (`exit 1`) if checks fail.
+  - [ipgroups_max](.github/actions/ipgroups_max/) verifies that the total number of IP Groups defined across the repository doesn't exceed a certain configurable maximum. This example sets the maximum to 80, below the current limit of Azure for 100. This action is using a [shell script](.github/actions/ipgroups_max/entrypoint.sh). Shell-based actions are composed of 4 files:
+    - [action.yaml](.github/actions/cidr_prefix_length_bicep/action.yml): inputs and outputs are defined.
+      - [README.md](.github/actions/ipgroups_max_bicep/README.md): documentation on how to use the action (inputs/outputs)
+      - [Dockerfile](.github/actions/cidr_prefix_length_bicep/Dockerfile): this will be used by Github to create a container. It can be the same file for all your shell-based actions.
+      - [entrypoint.sh](.github/actions/ipgroups_max_bicep/entrypoint.sh): main logic of the action. It completes successfully if the checks are satisfactory, or with an error (`exit 1`) if checks fail.
 - Python-based:
   - [cidr_prefix_length](.github/actions/cidr_prefix_length/): this Github action loads up JSON with a [Python script](.github/actions/cidr_prefix_length/entrypoint.py) to verify that the masks of CIDR prefixes used along the different files are not too broad. This python action includes an additional file:
-      - [requirements.txt](.github/actions/cidr_prefix_length_bicep/requirements.txt): Python modules that need to be installed. The [Dockerfile](.github/actions/cidr_prefix_length_bicep/) contains the line `RUN pip3 install -r requirements.txt` to process this file.
+    - [requirements.txt](.github/actions/cidr_prefix_length_bicep/requirements.txt): Python modules that need to be installed. The [Dockerfile](.github/actions/cidr_prefix_length_bicep/) contains the line `RUN pip3 install -r requirements.txt` to process this file.
   - [cidr_prefix_length_bicep](.github/actions/cidr_prefix_length_bicep/) very similar to the previous one, but in the case of bicep there is no JSON to load. Hence [pycep-parser](https://pypi.org/project/pycep-parser/) needs to be leveraged to transform bicep into JSON before analyzing it. See the [Python script](.github/actions/cidr_prefix_length_bicep/entrypoint.py) for more details.
 
 It is important to define the file path and extensions that will trigger each check: you don't want to run ARM validation on bicep files or vice versa. In the workflows for [ARM validation](.github/workflows/deploy_azfw_arm.yml) and [bicep validation](.github/workflows/deploy_azfw_bicep.yml) you find examples of this, for example to run the validation only when files in the ARM directory are changed:
@@ -200,6 +200,20 @@ The [bicep template](./shared/bicep/azfwpolicy.bicep) is configured to look for 
 
 Deploying Network Security Groups (NSGs) as code is an interesting exercise, since conversely to Azure Firewall policies, they are distributed in different subscriptions/landing zones.
 
+### Shared NSG rules
+
+First of all, why shared rules? Even if application admins should be the owners of the code that controls the way their application components work, central IT will probably need to review the policies by app admins to make sure they are compliant with the organization's policy. This review exercise might result in the addition of some "common" or "shared" NSG rules:
+
+1. Blocking well-known insecure protocols, such as Telnet
+1. Blocking protocols not required by the organization, such as SMTP (in many cases)
+1. Including an explicit "deny" rule at the end of the application-related "allow" rules. The reason for this is that the default rules for Azure NSGs turn into very permissive "permit any to any" as soon as default routes (for `0.0.0.0/0`) are installed in workload subnets. The reason is that the `VirtualNetwork` service tag not only contains the VNet's prefix, as the name seems to imply, but everything for what the virtual machine has explicit routing for (`0.0.0.0/0` if there is an UDR for that).
+
+You can manage NSGs in diffent ways:
+
+1. [Azure Virtual Network Manager](https://learn.microsoft.com/azure/virtual-network-manager/concept-use-cases#security) enables evaluating certain shared rules (called "admin NSG rules") before any other, which makes it ideal for dropping insecure or non-used protocols. However, it is not possible today deploying explicit denies **after** the "normal" NSG rules have been checked.
+1. You can use Azure Policy to deploy certain rules with specific parameters. See for example [this policy](shared/azpolicy/shared_nsg_rules_azpolicy_denyany.json) to create an explicit deny rule with a low priority, and [this policy](shared/azpolicy/shared_nsg_rules_azpolicy_allowLB.json) to create another rule just before that allows the Azure Load Balancer as source IP (this one would be a great candidate to be inserted via AVNM though). While this approach is rock solid, a downside is that between the time of the deployment and the time when the Azure policy kicks in, there would be an interval where the NSG wouldn't be compliant, since it wold be missing these shared rules.
+1. Yet another approach (what we follow in this repo) is doing this addition in GitHub, before deploying, where the bicep templates defined by the app owners in their own folders (in monorepo) or repositories (in multirepo) are "enhanced" with an additional bicep modules coming from the shared folder.
+
 For example, [infra-app01.bicep](app01/bicep/infra-app01.bicep) contains the infrastructure specific to app01 (in this example only an NSG). In the NSG module [nsg-app01.bicep](app01/bicep/nsg-app01.bicep) you can see the module `sharedInboundRules`, which gets some rules from the [shared](shared/bicep/) folder of the repo.
 
 ### Using simplified file formats for management
@@ -241,7 +255,7 @@ After running the template, you can see that the NSG is created with the rules c
 
 ![app04 NSG](./images/app04_nsg.png)
 
-# Conclusion
+## Conclusion
 
 This repo has demonstrated multiple concepts, such as:
 
