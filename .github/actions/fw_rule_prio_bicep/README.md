@@ -1,4 +1,4 @@
-# Maximum number of IP Groups check
+# Firewall rule priority numbers check
 
 This action verifies that the templates in the repo do not contain too many IP groups.
 
